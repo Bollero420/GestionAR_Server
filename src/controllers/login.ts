@@ -2,10 +2,6 @@ import User from '../models/user';
 import { Request, Response } from 'express';
 import jwt  from 'jsonwebtoken';
 
-const payload = {
-  check:  true
- };
-
 const signIn = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
@@ -15,6 +11,11 @@ const signIn = async (req: Request, res: Response) => {
       { password }
     ],
   });
+
+  const payload = {
+    check:  true,
+    user_id: logUser.id
+   };
 
   if (logUser) {
     const token = jwt.sign(payload, req.app.get('llave'), {

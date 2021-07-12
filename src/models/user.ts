@@ -10,6 +10,11 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  group_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'Group',
+    required: true,
+  }
 }, {
   timestamps: true,
   versionKey: false,
