@@ -6,4 +6,5 @@ export interface IStudentTutor extends IPerson {
   job: string;
   civil_status: string;
   educational_level: string;
+  other_info: string;
 }
