@@ -1,4 +1,4 @@
-import { Schema, Document } from "mongoose";
+import { Schema, Document } from 'mongoose';
 
 export interface IQualification extends Document {
   student_id: Schema.Types.ObjectId;
@@ -14,11 +14,11 @@ export const QualificationSchema = {
   },
   subject_id: {
     type: Schema.Types.ObjectId,
-    ref: 'subject',
+    ref: 'Subject',
     required: true,
   },
   bimonthly_date: {
     type: Date,
     required: true,
   },
-}
+};

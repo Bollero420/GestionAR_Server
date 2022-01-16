@@ -11,11 +11,12 @@ import subjectRouter from './subjects';
 import subjectQualificationRouter from './subjectQualifications';
 import teacherRouter from './teachers';
 import userRouter from './users';
-
+import authRouter from './login';
 
 const router = Router();
-const DEFAULT_PREFIX = '/api'
+const DEFAULT_PREFIX = '/api';
 
+router.use(`${DEFAULT_PREFIX}/auth`, authRouter);
 router.use(`${DEFAULT_PREFIX}/actions`, actionRouter);
 router.use(`${DEFAULT_PREFIX}/attendances`, attendanceRouter);
 router.use(`${DEFAULT_PREFIX}/forms`, formRouter);

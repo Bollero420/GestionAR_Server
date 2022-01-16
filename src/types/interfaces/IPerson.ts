@@ -1,18 +1,18 @@
-import { Schema, Document } from "mongoose";
+import { Schema, Document } from 'mongoose';
 
 export interface IPerson extends Document {
   firstName: string;
   lastName: string;
   phone: string;
   birth_date: Date;
-  dni: number;
+  dni: string;
+  location: string;
   country: string;
   address: string;
   gender: string;
   alternative_phone: string;
   user_id: Schema.Types.ObjectId;
 }
-
 
 export const PersonSchema = {
   firstName: {
@@ -32,8 +32,12 @@ export const PersonSchema = {
     required: true,
   },
   dni: {
-    type: Number,
-    required: true
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
   },
   country: {
     type: String,
@@ -56,4 +60,4 @@ export const PersonSchema = {
     ref: 'User',
     required: true,
   },
-}
+};
