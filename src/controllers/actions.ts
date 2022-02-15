@@ -6,67 +6,67 @@ const createAction = async (req: Request, res: Response) => {
 
   const newAction = new Action({
     action_name,
-    form_id
+    form_id,
   });
 
   try {
     const savedAction = await newAction.save();
     if (savedAction) {
-      res.json('Action added!')
+      res.status(200).json('Action added!');
     }
   } catch (error) {
-    res.status(400).json('Error: ' + error)
+    res.status(400).json('Error: ' + error);
   }
-}
+};
 
 const getActions = async (req: Request, res: Response) => {
   try {
     const actions = Action.find();
     if (actions) {
-      res.json(actions)
+      res.status(200).json(actions);
     }
   } catch (error) {
-    res.status(400).json('Error: ' + error)
+    res.status(400).json('Error: ' + error);
   }
-}
+};
 
 const getActionById = async (req: Request, res: Response) => {
   try {
     const action = Action.findById(req.params.id);
     if (action) {
-      res.json(action)
+      res.status(200).json(action);
     }
   } catch (error) {
-    res.status(400).json('Error: ' + error)
+    res.status(400).json('Error: ' + error);
   }
-}
+};
 
 const updateAction = async (req: Request, res: Response) => {
   try {
     const action = Action.findByIdAndUpdate(req.params.id, req.body);
     if (action) {
-      res.json('Action updated!')
+      res.status(200).json('Action updated!');
     }
   } catch (error) {
-    res.status(400).json('Error: ' + error)
+    res.status(400).json('Error: ' + error);
   }
-}
+};
 
 const deleteAction = async (req: Request, res: Response) => {
   try {
     const action = Action.findByIdAndRemove(req.params.id);
     if (action) {
-      res.json('Action deleted!')
+      res.status(200).json('Action deleted!');
     }
   } catch (error) {
-    res.status(400).json('Error: ' + error)
+    res.status(400).json('Error: ' + error);
   }
-}
+};
 
 export default {
   getActions,
   createAction,
   getActionById,
   updateAction,
-  deleteAction
+  deleteAction,
 };
