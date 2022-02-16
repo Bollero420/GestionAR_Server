@@ -11,7 +11,7 @@ import subjectRouter from './subjects';
 import subjectQualificationRouter from './subjectQualifications';
 import teacherRouter from './teachers';
 import userRouter from './users';
-import authRouter from './login';
+import authRouter from './auth';
 
 const router = Router();
 const DEFAULT_PREFIX = '/api';
