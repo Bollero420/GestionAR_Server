@@ -1,14 +1,16 @@
-import groups from '../controllers/groups';
 import { Router } from 'express';
+
+import groupController from '../controllers/groups';
+import { authenticatedRoutes } from '../middlewares/authenticated-routes';
+
+const { getGroups, createGroup, getGroupById, updateGroup, deleteGroup } = groupController;
 
 const router = Router();
 
-router.get('/', groups.getGroups);
-
-router.post('/add', groups.createGroup);
-
-router.get("/:id", groups.getGroupById);
-router.put('/:id', groups.updateGroup);
-router.delete("/:id", groups.deleteGroup);
+router.get('/', authenticatedRoutes, getGroups);
+router.post('/add', authenticatedRoutes, createGroup);
+router.get('/:id', authenticatedRoutes, getGroupById);
+router.put('/:id', authenticatedRoutes, updateGroup);
+router.delete('/:id', authenticatedRoutes, deleteGroup);
 
 export default router;

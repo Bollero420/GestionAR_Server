@@ -1,14 +1,16 @@
-import grades from '../controllers/grades';
 import { Router } from 'express';
+
+import gradeController from '../controllers/grades';
+import { authenticatedRoutes } from '../middlewares/authenticated-routes';
+
+const { getGrades, createGrade, getGradeById, updateGrade, deleteGrade } = gradeController;
 
 const router = Router();
 
-router.get('/', grades.getGrades);
-
-router.post('/add', grades.createGrade);
-
-router.get("/:id", grades.getGradeById);
-router.put('/:id', grades.updateGrade);
-router.delete("/:id", grades.deleteGrade);
+router.get('/', authenticatedRoutes, getGrades);
+router.post('/add', authenticatedRoutes, createGrade);
+router.get('/:id', authenticatedRoutes, getGradeById);
+router.put('/:id', authenticatedRoutes, updateGrade);
+router.delete('/:id', authenticatedRoutes, deleteGrade);
 
 export default router;
