@@ -10,11 +10,11 @@ export const authenticatedRoutes = (req: any, res: Response, next: NextFunction)
   try {
     const token = req.cookies[TOKEN_HEADER];
     if (token) {
-      jwt.verify(token, JSON_WEB_TOKEN_KEY, (err: VerifyErrors, decoded: any) => {
+      jwt.verify(token, JSON_WEB_TOKEN_KEY, async (err: VerifyErrors, decoded: any) => {
         if (err) {
           return res.status(404).json({ message: 'Invalid Token' });
         } else {
-          const user = User.findById(decoded.user_id);
+          const user = await User.findById(decoded.userId);
           req.currentUser = user;
           next();
         }

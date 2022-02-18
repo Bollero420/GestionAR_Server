@@ -21,9 +21,12 @@ const signIn = async (req: Request, res: Response) => {
 
     if (logUser) {
       const isPasswordMatch = bcrypt.compare(password, logUser.password);
+
       if (isPasswordMatch) {
         const token = createToken(logUser._id);
+
         res.cookie(TOKEN_HEADER, token, { httpOnly: true, maxAge: MAX_AGE_MILI_SECONDS });
+
         res.status(200).json({
           message: 'Autenticación correcta',
           userId: logUser._id,
@@ -39,6 +42,16 @@ const signIn = async (req: Request, res: Response) => {
   }
 };
 
+const signOut = async (req: Request, res: Response) => {
+  try {
+    res.cookie(TOKEN_HEADER, '', { maxAge: 1 });
+    res.status(200);
+  } catch (error) {
+    res.status(400).json(`Error: ${error.message}`);
+  }
+};
+
 export default {
   signIn,
+  signOut,
 };
