@@ -1,5 +1,5 @@
-import { Schema } from "mongoose";
-import { IPerson } from "./IPerson";
+import { Schema } from 'mongoose';
+import { IPerson } from './IPerson';
 
 export interface IStudent extends IPerson {
   grade_id: Schema.Types.ObjectId;
@@ -16,6 +16,5 @@ export interface IStudent extends IPerson {
   school_dining?: boolean;
   milk_cup?: boolean;
   repeating_quantity: number;
-  student_tutors: [Schema.Types.ObjectId];
+  student_tutors: Schema.Types.ObjectId[];
 }
-

@@ -41,7 +41,7 @@ export const PersonSchema = {
   },
   country: {
     type: String,
-    required: true,
+    required: false,
   },
   address: {
     type: String,
@@ -58,6 +58,5 @@ export const PersonSchema = {
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
   },
 };

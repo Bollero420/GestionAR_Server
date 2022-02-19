@@ -9,7 +9,7 @@ const StudentTutorSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'Student',
-        required: true,
+        required: false,
       },
     ],
     job: {
