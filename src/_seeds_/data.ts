@@ -1,4 +1,4 @@
-const form_data = [
+const forms = [
   {
     form_name: 'student',
   },
@@ -16,7 +16,7 @@ const form_data = [
   },
 ];
 
-const action_data = [
+const actions = [
   {
     action_name: 'create_student',
     form_id: 'form_id',
@@ -67,7 +67,7 @@ const action_data = [
   },
 ];
 
-const group_data: any = [
+const groups: any = [
   {
     group_name: 'teachers',
     users: [],
@@ -85,7 +85,7 @@ const group_data: any = [
   },
 ];
 
-const grade_data: any[] = [
+const grades: any[] = [
   {
     level: 1,
     section: 'A',
@@ -382,7 +382,7 @@ const grade_data: any[] = [
   },
 ];
 
-const subject_data: any[] = [
+const subjects: any[] = [
   { subject_name: 'Lengua', teachers: [] },
   { subject_name: 'Ciencies Sociales', teachers: [] },
   { subject_name: 'Matematica', teachers: [] },
@@ -394,3 +394,11 @@ const subject_data: any[] = [
   { subject_name: 'Musica', teachers: [] },
   { subject_name: 'Observaciones', teachers: [] },
 ];
+
+export default {
+  forms,
+  actions,
+  groups,
+  grades,
+  subjects,
+};
