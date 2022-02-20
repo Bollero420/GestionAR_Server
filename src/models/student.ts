@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose';
+
 import { PersonSchema } from '../types/interfaces/IPerson';
 import { IStudent } from '../types/interfaces/IStudent';
+
 import User from './user';
 import Group from './group';
 

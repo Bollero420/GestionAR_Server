@@ -14,6 +14,11 @@ export interface IPerson extends Document {
   user_id: Schema.Types.ObjectId;
 }
 
+export enum GENDER {
+  MASCULINO = 'MASCULINO',
+  FEMENINO = 'FEMENINO',
+}
+
 export const PersonSchema = {
   firstName: {
     type: String,

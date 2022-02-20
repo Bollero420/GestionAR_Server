@@ -1,5 +1,6 @@
-import User from '../models/user';
 import { Request, Response } from 'express';
+
+import User from '../models/user';
 
 const createUser = async (req: Request, res: Response) => {
   const { username, firstName, lastName, password } = req.body;
