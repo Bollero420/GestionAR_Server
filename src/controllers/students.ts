@@ -117,7 +117,7 @@ const createStudent = async (req: Request, res: Response) => {
     const gradeDoc = await getGradeId(grade);
 
     // create main student
-    const newStudent = new Student({
+    const newStudent = await Student.create({
       ...student_common_data,
       entry_date: new Date(),
       registration_number: dni,
@@ -131,12 +131,10 @@ const createStudent = async (req: Request, res: Response) => {
       grade_id: gradeDoc._id,
     });
 
-    // save main student
-    const savedStudent = await newStudent.save();
-    savedStudents = [...savedStudents, savedStudent];
+    savedStudents = [...savedStudents, newStudent];
 
     // add student to grade
-    gradeDoc.students = [...gradeDoc.students, savedStudent._id];
+    gradeDoc.students = [...gradeDoc.students, newStudent._id];
     await gradeDoc.save();
 
     // create siblings
@@ -147,7 +145,7 @@ const createStudent = async (req: Request, res: Response) => {
       const gradeDoc = await getGradeId(grade);
 
       // create sibling student
-      const newStudent = new Student({
+      const newStudent = Student.create({
         ...student_common_data,
         entry_date: new Date(),
         registration_number: sibling.dni,
@@ -159,8 +157,7 @@ const createStudent = async (req: Request, res: Response) => {
       });
 
       // save sibling student
-      const savedStudent = await newStudent.save();
-      savedStudents = [...savedStudents, savedStudent];
+      savedStudents = [...savedStudents, newStudent];
     }
 
     // updated studentTutor with objectIds
@@ -171,7 +168,7 @@ const createStudent = async (req: Request, res: Response) => {
       await savedTutor.save();
     }
 
-    if (savedStudent && savedTutors.length > 0) {
+    if (newStudent && savedTutors.length > 0) {
       res.status(200).json('Student added!');
     }
   } catch (error) {

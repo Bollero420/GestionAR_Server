@@ -59,6 +59,7 @@ const signIn = async (req: Request, res: Response) => {
 const signOut = async (req: Request, res: Response) => {
   try {
     res.cookie(ACCESS_TOKEN_HEADER, '', { maxAge: 1 });
+    res.cookie(REFRESH_TOKEN_HEADER, '', { maxAge: 1 });
     res.status(200);
   } catch (error) {
     res.status(400).json(`Error: ${error.message}`);
