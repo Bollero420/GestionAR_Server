@@ -1,6 +1,6 @@
-import { Document, Schema } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface ISubject extends Document {
   subject_name: string;
-  teachers: Schema.Types.ObjectId[];
+  teachers: Types.ObjectId[];
 }

@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 
 import Student from '../models/student';
 import StudentTutor from '../models/studentTutor';
 import Grade from '../models/grade';
+import Observation from '../models/observation';
+import SubjectQualification from '../models/subjectQualification';
 
 const getGradeId = async (gradeData: any) =>
   await Grade.findOne({
@@ -220,10 +223,49 @@ const deleteStudent = async (req: Request, res: Response) => {
   }
 };
 
+const getStudentQualificationsAndObservations = async (req: Request, res: Response) => {
+  try {
+    const { id: student_id } = req.params;
+    const { date } = req.body;
+
+    const student = Student.findById(student_id);
+
+    const formattedDate = new Date(date);
+    const year = formattedDate.getFullYear();
+    const month = formattedDate.getMonth();
+    const day = formattedDate.getDay();
+
+    const previousMonth = day === 1 ? month - 1 : month;
+    const previousYear = day === 1 && month === 0 ? year - 1 : year;
+    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+
+    const observations = await Observation.findOne({
+      student_id,
+      bimonthly_date: {
+        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
+        $lt: new Date(year, month, day),
+      },
+    });
+
+    const qualifications = await SubjectQualification.find({
+      student_id,
+      bimonthly_date: {
+        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
+        $lt: new Date(year, month, day),
+      },
+    }).populate('subject_id');
+
+    res.status(200).json({ observations, qualifications });
+  } catch (error) {
+    res.status(400).json('Error: ' + error);
+  }
+};
+
 export default {
   createStudent,
   getStudents,
   getStudentById,
   updateStudent,
   deleteStudent,
+  getStudentQualificationsAndObservations,
 };

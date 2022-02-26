@@ -1,5 +1,7 @@
-import SubjectQualification from '../models/subjectQualification';
 import { Request, Response } from 'express';
+
+import SubjectQualification from '../models/subjectQualification';
+import Grade from '../models/grade';
 
 const createSubjectQualification = async (req: Request, res: Response) => {
   const { student_id, subject_id, bimonthly_date, value } = req.body;
@@ -23,6 +25,48 @@ const createSubjectQualification = async (req: Request, res: Response) => {
 
 const getSubjectQualifications = async (req: Request, res: Response) => {
   try {
+    const { gradeId, subjectId, date } = req.body;
+
+    const formattedDate = new Date(date);
+    const year = formattedDate.getFullYear();
+    const month = formattedDate.getMonth();
+    const day = formattedDate.getDay();
+
+    const previousMonth = day === 1 ? month - 1 : month;
+    const previousYear = day === 1 && month === 0 ? year - 1 : year;
+    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+
+    const gradeDoc = await Grade.findById(gradeId).populate('students');
+    const studentIds = gradeDoc.students.map((s: any) => s._id);
+
+    const qualifications = await SubjectQualification.find({
+      bimonthly_date: {
+        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
+        $lt: new Date(year, month, day),
+      },
+      student_id: { $in: studentIds },
+      subjectId,
+    }).populate('student_id');
+
+    if (qualifications.length > 0) {
+      const result = qualifications.map((qualification: any) => ({
+        student_id: qualification.student_id._id,
+        student_name: qualification.student_id.lastName + ', ' + qualification.student_id.firstName,
+        registration_number: qualification.student_id.registration_number,
+        qualification: qualification.value,
+      }));
+
+      res.status(200).json({ qualifications: result, isEdit: true });
+    } else {
+      const result = gradeDoc.students.map((student: any) => ({
+        student_id: student._id,
+        student_name: student.lastName + ', ' + student.firstName,
+        registration_number: student.registration_number,
+        qualification: null,
+      }));
+      res.status(200).json({ qualifications: result, isEdit: false });
+    }
+
     const subjectQualifications = SubjectQualification.find();
     if (subjectQualifications) {
       res.status(200).json(subjectQualifications);
@@ -47,8 +91,23 @@ const updateSubjectQualification = async (req: Request, res: Response) => {
   try {
     const subjectQualification = SubjectQualification.findByIdAndUpdate(req.params.id, req.body);
     if (subjectQualification) {
-      res.status(200).json('SubjectQualification updated!');
+      res.status(200).json('Qualification updated!');
     }
+  } catch (error) {
+    res.status(400).json('Error: ' + error);
+  }
+};
+
+const updateSubjectQualifications = async (req: Request, res: Response) => {
+  try {
+    const { qualifications } = req.body;
+
+    for (let index = 0; index < qualifications.length; index++) {
+      const qualification = qualifications[index];
+
+      await SubjectQualification.findByIdAndUpdate(qualification._id, qualification);
+    }
+    res.status(200).json('Qualifications updated!');
   } catch (error) {
     res.status(400).json('Error: ' + error);
   }
@@ -70,5 +129,6 @@ export default {
   getSubjectQualifications,
   getSubjectQualificationById,
   updateSubjectQualification,
+  updateSubjectQualifications,
   deleteSubjectQualification,
 };

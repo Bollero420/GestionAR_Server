@@ -1,8 +1,8 @@
-import { Schema, Document } from 'mongoose';
+import { Schema, Document, Types } from 'mongoose';
 
 export interface IQualification extends Document {
-  student_id: Schema.Types.ObjectId;
-  subject_id: Schema.Types.ObjectId;
+  student_id: Types.ObjectId;
+  subject_id: Types.ObjectId;
   bimonthly_date: Date;
 }
 

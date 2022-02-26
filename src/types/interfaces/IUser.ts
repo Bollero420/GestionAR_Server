@@ -1,4 +1,4 @@
-import { Document, Schema } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
   username: string;
@@ -6,5 +6,5 @@ export interface IUser extends Document {
   emailAddress: string;
   createdAt: Date;
   updatedAt: Date;
-  group_id: Schema.Types.ObjectId;
+  group_id: Types.ObjectId;
 }

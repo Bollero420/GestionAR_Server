@@ -9,6 +9,7 @@ const SubjectQualificationSchema = new Schema(
     value: {
       type: String,
       required: true,
+      default: null,
     },
   },
   {

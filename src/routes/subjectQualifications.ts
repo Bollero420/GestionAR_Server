@@ -8,6 +8,7 @@ const {
   createSubjectQualification,
   getSubjectQualificationById,
   updateSubjectQualification,
+  updateSubjectQualifications,
   deleteSubjectQualification,
 } = subjectQualificationController;
 
@@ -17,6 +18,7 @@ router.get('/', authenticatedRoutes, getSubjectQualifications);
 router.post('/add', authenticatedRoutes, createSubjectQualification);
 router.get('/:id', authenticatedRoutes, getSubjectQualificationById);
 router.put('/:id', authenticatedRoutes, updateSubjectQualification);
+router.put('/update', authenticatedRoutes, updateSubjectQualifications);
 router.delete('/:id', authenticatedRoutes, deleteSubjectQualification);
 
 export default router;
