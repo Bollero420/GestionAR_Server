@@ -65,6 +65,7 @@ const StudentSchema = new Schema(
     repeating_quantity: {
       type: Number,
       required: false,
+      default: 0,
     },
     emailAddress: {
       type: String,

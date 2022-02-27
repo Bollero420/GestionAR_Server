@@ -10,33 +10,15 @@ import Observation from '../models/observation';
 import {
   processAttendancesByDateAndGender,
   processStudentsByGender,
-  MonthlyProcessedData,
-  StudentsByLevel,
-  LevelKeys,
+  getRepeatersByGender,
+  getStudentsByAgeAndGender,
 } from '../helpers/reports/data_processors';
 
 import { SUBJECT_QTY } from '../utils/constants';
 
 import { IStudent } from '../types/interfaces/IStudent';
-
-type MonthlyReport = {
-  previousMonth: MonthlyProcessedData;
-  newThisMonth: MonthlyProcessedData;
-  goneThisMonth: MonthlyProcessedData;
-  leftThisMonth: MonthlyProcessedData;
-  attendancesThisMonth: MonthlyProcessedData;
-  unAttendancesThisMonth: MonthlyProcessedData;
-  attendancesAverage: MonthlyProcessedData;
-};
-
-const groupBy = (items: any[], key: string) =>
-  items.reduce(
-    (result, item) => ({
-      ...result,
-      [item[key]]: [...(result[item[key]] || []), item],
-    }),
-    {}
-  );
+import { LevelKeys, StudentsByLevel, MonthlyReport } from '../types/interfaces/IProcessors';
+import { generateDateHelpers, groupBy } from '../helpers';
 
 const generateMonthlyReport = async (month: number, year: number, grade_id: string) => {
   const report: MonthlyReport = {} as MonthlyReport;
@@ -46,9 +28,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
     createdAt: 1,
   };
 
-  const previousMonth = month === 0 ? 11 : month - 1;
-  const nextMonth = month === 11 ? 0 : month + 1;
-  const daysQtyOfTheMonth = new Date(year, month, 0).getDate();
+  const { previousMonth, nextMonth, daysQtyOfTheMonth } = generateDateHelpers(month, year);
 
   const gradeDoc = await Grade.findById(grade_id).lean();
 
@@ -188,11 +168,9 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
 };
 
 const generateBiMonthlyReport = async (month: number, year: number, student_id: Types.ObjectId) => {
-  const previousMonth = month === 1 ? 11 : month === 0 ? 10 : month - 2;
-  const nextMonth = month === 11 ? 0 : month + 2;
-
   //? TO.DO: store amount of available days per month and use it instead of daysQtyOfTheMonth
-  const daysQtyOfTheMonth = new Date(year, month, 0).getDate();
+
+  const { previousTwoMonth, nextTwoMonth, daysQtyOfTheMonth } = generateDateHelpers(month, year);
 
   const subjects = await Subject.find().lean();
   const student = await Student.findById(student_id).lean();
@@ -200,7 +178,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
   const studentAttendancesDocsQty = await Attendance.countDocuments({
     createdAt: {
       $gte: new Date(year, month, 1),
-      $lt: new Date(year, nextMonth, 1),
+      $lt: new Date(year, nextTwoMonth, 1),
     },
     state: true,
     student_id,
@@ -218,7 +196,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
     if (subject.subject_name === 'Observaciones'.toLocaleLowerCase()) {
       const studentObservation = await Observation.findOne({
         createdAt: {
-          $gte: new Date(year, previousMonth, 1),
+          $gte: new Date(year, previousTwoMonth, 1),
           $lt: new Date(year, month, 1),
         },
         student_id,
@@ -241,7 +219,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
 
       const studentQualification = await SubjectQualification.findOne({
         createdAt: {
-          $gte: new Date(year, previousMonth, 1),
+          $gte: new Date(year, previousTwoMonth, 1),
           $lt: new Date(year, month, 1),
         },
         student_id,
@@ -262,6 +240,7 @@ const generateAnnuallyReport = async () => {
   let report: any = {};
 
   const grades = await Grade.find({}, { students: 1, level: 1 }).populate('students').lean();
+  const gradesLevels = new Set([...grades.map((grade) => grade.level)]);
 
   const gradesByLevel: StudentsByLevel = groupBy(grades, 'level');
 
@@ -276,6 +255,18 @@ const generateAnnuallyReport = async () => {
   );
 
   report.genderByGrades = studentsByLevel.map((students: IStudent[]) => processStudentsByGender(students));
+
+  const milk_cup_results = await Student.find({ milk_cup: true }).lean();
+  const processedMilkCup = processStudentsByGender(milk_cup_results);
+
+  const school_dining_results = await Student.find({ school_dining: true }).lean();
+  const processedDining = processStudentsByGender(school_dining_results);
+
+  report.foodServiceByGenders = [{ ...processedMilkCup }, { ...processedDining }];
+
+  report.repeatersByGender = getRepeatersByGender(gradesLevels, studentsByLevel);
+
+  report.studentsByAgeAndGender = getStudentsByAgeAndGender(gradesLevels, studentsByLevel);
 };
 
 const monthlyReport = async (req: any, res: any) => {
