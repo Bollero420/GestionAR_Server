@@ -67,7 +67,7 @@ const getSubjectQualifications = async (req: Request, res: Response) => {
       res.status(200).json({ qualifications: result, isEdit: false });
     }
 
-    const subjectQualifications = SubjectQualification.find();
+    const subjectQualifications = await SubjectQualification.find();
     if (subjectQualifications) {
       res.status(200).json(subjectQualifications);
     }
@@ -78,7 +78,7 @@ const getSubjectQualifications = async (req: Request, res: Response) => {
 
 const getSubjectQualificationById = async (req: Request, res: Response) => {
   try {
-    const subjectQualification = SubjectQualification.findById(req.params.id);
+    const subjectQualification = await SubjectQualification.findById(req.params.id);
     if (subjectQualification) {
       res.status(200).json(subjectQualification);
     }
@@ -89,7 +89,7 @@ const getSubjectQualificationById = async (req: Request, res: Response) => {
 
 const updateSubjectQualification = async (req: Request, res: Response) => {
   try {
-    const subjectQualification = SubjectQualification.findByIdAndUpdate(req.params.id, req.body);
+    const subjectQualification = await SubjectQualification.findByIdAndUpdate(req.params.id, req.body);
     if (subjectQualification) {
       res.status(200).json('Qualification updated!');
     }
@@ -115,7 +115,7 @@ const updateSubjectQualifications = async (req: Request, res: Response) => {
 
 const deleteSubjectQualification = async (req: Request, res: Response) => {
   try {
-    const subjectQualification = SubjectQualification.findByIdAndRemove(req.params.id);
+    const subjectQualification = await SubjectQualification.findByIdAndRemove(req.params.id);
     if (subjectQualification) {
       res.status(200).json('SubjectQualification deleted!');
     }

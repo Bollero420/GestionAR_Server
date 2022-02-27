@@ -181,7 +181,7 @@ const createStudent = async (req: Request, res: Response) => {
 
 const getStudents = async (req: Request, res: Response) => {
   try {
-    const students = Student.find();
+    const students = await Student.find();
     if (students) {
       res.status(200).json(students);
     }
@@ -192,7 +192,7 @@ const getStudents = async (req: Request, res: Response) => {
 
 const getStudentById = async (req: Request, res: Response) => {
   try {
-    const student = Student.findById(req.params.id);
+    const student = await Student.findById(req.params.id);
     if (student) {
       res.status(200).json(student);
     }
@@ -203,7 +203,7 @@ const getStudentById = async (req: Request, res: Response) => {
 
 const updateStudent = async (req: Request, res: Response) => {
   try {
-    const student = Student.findByIdAndUpdate(req.params.id, req.body);
+    const student = await Student.findByIdAndUpdate(req.params.id, req.body);
     if (student) {
       res.status(200).json('Student updated!');
     }
@@ -214,7 +214,7 @@ const updateStudent = async (req: Request, res: Response) => {
 
 const deleteStudent = async (req: Request, res: Response) => {
   try {
-    const student = Student.findByIdAndRemove(req.params.id);
+    const student = await Student.findByIdAndRemove(req.params.id);
     if (student) {
       res.status(200).json('Student deleted!');
     }
@@ -228,8 +228,6 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
     const { id: student_id } = req.params;
     const { date } = req.body;
 
-    const student = Student.findById(student_id);
-
     const formattedDate = new Date(date);
     const year = formattedDate.getFullYear();
     const month = formattedDate.getMonth();
@@ -239,7 +237,7 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
     const previousYear = day === 1 && month === 0 ? year - 1 : year;
     const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
 
-    const observations = await Observation.findOne({
+    const observation = await Observation.findOne({
       student_id,
       bimonthly_date: {
         $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
@@ -255,7 +253,156 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
       },
     }).populate('subject_id');
 
-    res.status(200).json({ observations, qualifications });
+    let response: any = {};
+
+    if (observation) {
+      response.observation = observation;
+    } else {
+      response.observation = {
+        description: '',
+        worry_and_effort: '',
+        respect_rules: '',
+        solidarity_and_collaboration: '',
+        group_responsibility: '',
+      };
+    }
+
+    if (qualifications.length > 0) {
+      response.qualifications = [
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'lengua',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'ciencias_sociales',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'matematica',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'ciencias_naturales',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'tecnologia',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'formacion_etica_y_ciudadana',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'educacion_fisica',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'plasitca',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'musica',
+          },
+        },
+        {
+          value: '',
+          subject_id: {
+            subject_name: 'observaciones',
+          },
+        },
+      ];
+    } else {
+      response.qualifications = qualifications;
+    }
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json('Error: ' + error);
+  }
+};
+
+const generateStudentQualificationsAndObservations = async (req: Request, res: Response) => {
+  try {
+    const { id: student_id } = req.params;
+    const { qualifications, observation } = req.body;
+
+    for (let index = 0; index < qualifications.length; index++) {
+      const qualification = qualifications[index];
+
+      const { subject_id, value } = qualification;
+
+      const newQualification = new SubjectQualification({
+        student_id,
+        subject_id,
+        value,
+      });
+
+      await newQualification.save();
+    }
+
+    const obs = new Observation({
+      description: observation.description,
+      worry_and_effort: observation.worry_and_effort,
+      respect_rules: observation.respect_rules,
+      solidarity_and_collaboration: observation.solidarity_and_collaboration,
+      group_responsibility: observation.group_responsibility,
+    });
+    await obs.save();
+  } catch (error) {
+    res.status(400).json('Error: ' + error);
+  }
+};
+
+const updateStudentQualificationsAndObservations = async (req: Request, res: Response) => {
+  try {
+    const { id: student_id } = req.params;
+    const { qualifications, observation } = req.body;
+
+    for (let index = 0; index < qualifications.length; index++) {
+      const qualification = qualifications[index];
+
+      const { bimonthly_date, value } = qualification;
+
+      await SubjectQualification.findByIdAndUpdate(
+        qualification?._id,
+        {
+          value,
+          bimonthly_date,
+          student_id: Types.ObjectId(student_id),
+          subject_id: Types.ObjectId(qualification.subject_id),
+        },
+        { upsert: true }
+      );
+    }
+
+    await Observation.findByIdAndUpdate(
+      observation?._id,
+      {
+        ...observation,
+        student_id: Types.ObjectId(student_id),
+        subject_id: Types.ObjectId(student_id),
+      },
+      { upsert: true }
+    );
   } catch (error) {
     res.status(400).json('Error: ' + error);
   }
@@ -268,4 +415,6 @@ export default {
   updateStudent,
   deleteStudent,
   getStudentQualificationsAndObservations,
+  generateStudentQualificationsAndObservations,
+  updateStudentQualificationsAndObservations,
 };

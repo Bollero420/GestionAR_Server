@@ -24,7 +24,7 @@ const createGrade = async (req: Request, res: Response) => {
 
 const getGrades = async (req: Request, res: Response) => {
   try {
-    const grades = Grade.find();
+    const grades = await Grade.find();
     if (grades) {
       res.status(200).json(grades);
     }
@@ -35,7 +35,7 @@ const getGrades = async (req: Request, res: Response) => {
 
 const getGradeById = async (req: Request, res: Response) => {
   try {
-    const grade = Grade.findById(req.params.id);
+    const grade = await Grade.findById(req.params.id);
     if (grade) {
       res.status(200).json(grade);
     }
@@ -46,7 +46,7 @@ const getGradeById = async (req: Request, res: Response) => {
 
 const updateGrade = async (req: Request, res: Response) => {
   try {
-    const grade = Grade.findByIdAndUpdate(req.params.id, req.body);
+    const grade = await Grade.findByIdAndUpdate(req.params.id, req.body);
     if (grade) {
       res.status(200).json('Grade updated!');
     }
@@ -57,7 +57,7 @@ const updateGrade = async (req: Request, res: Response) => {
 
 const deleteGrade = async (req: Request, res: Response) => {
   try {
-    const grade = Grade.findByIdAndRemove(req.params.id);
+    const grade = await Grade.findByIdAndRemove(req.params.id);
     if (grade) {
       res.status(200).json('Grade deleted!');
     }

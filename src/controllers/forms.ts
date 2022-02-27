@@ -20,7 +20,7 @@ const createForm = async (req: Request, res: Response) => {
 
 const getForms = async (req: Request, res: Response) => {
   try {
-    const forms = Form.find();
+    const forms = await Form.find();
     if (forms) {
       res.status(200).json(forms);
     }
@@ -31,7 +31,7 @@ const getForms = async (req: Request, res: Response) => {
 
 const getFormById = async (req: Request, res: Response) => {
   try {
-    const form = Form.findById(req.params.id);
+    const form = await Form.findById(req.params.id);
     if (form) {
       res.status(200).json(form);
     }
@@ -42,7 +42,7 @@ const getFormById = async (req: Request, res: Response) => {
 
 const updateForm = async (req: Request, res: Response) => {
   try {
-    const form = Form.findByIdAndUpdate(req.params.id, req.body);
+    const form = await Form.findByIdAndUpdate(req.params.id, req.body);
     if (form) {
       res.status(200).json('Form updated!');
     }
@@ -53,7 +53,7 @@ const updateForm = async (req: Request, res: Response) => {
 
 const deleteForm = async (req: Request, res: Response) => {
   try {
-    const form = Form.findByIdAndRemove(req.params.id);
+    const form = await Form.findByIdAndRemove(req.params.id);
     if (form) {
       res.status(200).json('Form deleted!');
     }

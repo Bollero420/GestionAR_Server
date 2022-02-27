@@ -1,6 +1,6 @@
 import User from '../models/user';
 import { Request, Response } from 'express';
-import jwt, { verify, VerifyErrors } from 'jsonwebtoken';
+import jwt, { VerifyErrors } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import {
   ACCESS_TOKEN_HEADER,

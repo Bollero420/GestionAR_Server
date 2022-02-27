@@ -24,7 +24,7 @@ const createUser = async (req: Request, res: Response) => {
 
 const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = User.find();
+    const users = await User.find();
     if (users) {
       res.status(200).json(users);
     }
@@ -35,7 +35,7 @@ const getUsers = async (req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   try {
-    const user = User.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     if (user) {
       res.status(200).json(user);
     }
@@ -46,7 +46,7 @@ const getUserById = async (req: Request, res: Response) => {
 
 const updateUser = async (req: Request, res: Response) => {
   try {
-    const user = User.findByIdAndUpdate(req.params.id, req.body);
+    const user = await User.findByIdAndUpdate(req.params.id, req.body);
     if (user) {
       res.status(200).json('User updated!');
     }
@@ -57,7 +57,7 @@ const updateUser = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
   try {
-    const user = User.findByIdAndRemove(req.params.id);
+    const user = await User.findByIdAndRemove(req.params.id);
     if (user) {
       res.status(200).json('User deleted!');
     }

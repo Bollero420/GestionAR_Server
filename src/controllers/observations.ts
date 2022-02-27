@@ -36,7 +36,7 @@ const createObservation = async (req: Request, res: Response) => {
 
 const getObservations = async (req: Request, res: Response) => {
   try {
-    const observations = Observation.find();
+    const observations = await Observation.find();
     if (observations) {
       res.status(200).json(observations);
     }
@@ -47,7 +47,7 @@ const getObservations = async (req: Request, res: Response) => {
 
 const getObservationById = async (req: Request, res: Response) => {
   try {
-    const observation = Observation.findById(req.params.id);
+    const observation = await Observation.findById(req.params.id);
     if (observation) {
       res.status(200).json(observation);
     }
@@ -58,7 +58,7 @@ const getObservationById = async (req: Request, res: Response) => {
 
 const updateObservation = async (req: Request, res: Response) => {
   try {
-    const observation = Observation.findByIdAndUpdate(req.params.id, req.body);
+    const observation = await Observation.findByIdAndUpdate(req.params.id, req.body);
     if (observation) {
       res.status(200).json('Observation updated!');
     }
@@ -69,7 +69,7 @@ const updateObservation = async (req: Request, res: Response) => {
 
 const deleteObservation = async (req: Request, res: Response) => {
   try {
-    const observation = Observation.findByIdAndRemove(req.params.id);
+    const observation = await Observation.findByIdAndRemove(req.params.id);
     if (observation) {
       res.status(200).json('Observation deleted!');
     }

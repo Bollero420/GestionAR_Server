@@ -48,7 +48,7 @@ const createStudentTutor = async (req: Request, res: Response) => {
 
 const getStudentTutors = async (req: Request, res: Response) => {
   try {
-    const studentTutors = StudentTutor.find();
+    const studentTutors = await StudentTutor.find();
     if (studentTutors) {
       res.status(200).json(studentTutors);
     }
@@ -59,7 +59,7 @@ const getStudentTutors = async (req: Request, res: Response) => {
 
 const getStudentTutorById = async (req: Request, res: Response) => {
   try {
-    const studentTutor = StudentTutor.findById(req.params.id);
+    const studentTutor = await StudentTutor.findById(req.params.id);
     if (studentTutor) {
       res.status(200).json(studentTutor);
     }
@@ -70,7 +70,7 @@ const getStudentTutorById = async (req: Request, res: Response) => {
 
 const updateStudentTutor = async (req: Request, res: Response) => {
   try {
-    const studentTutor = StudentTutor.findByIdAndUpdate(req.params.id, req.body);
+    const studentTutor = await StudentTutor.findByIdAndUpdate(req.params.id, req.body);
     if (studentTutor) {
       res.status(200).json('StudentTutor updated!');
     }
@@ -81,7 +81,7 @@ const updateStudentTutor = async (req: Request, res: Response) => {
 
 const deleteStudentTutor = async (req: Request, res: Response) => {
   try {
-    const studentTutor = StudentTutor.findByIdAndRemove(req.params.id);
+    const studentTutor = await StudentTutor.findByIdAndRemove(req.params.id);
     if (studentTutor) {
       res.status(200).json('StudentTutor deleted!');
     }

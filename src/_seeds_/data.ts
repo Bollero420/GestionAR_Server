@@ -383,16 +383,16 @@ const grades: any[] = [
 ];
 
 const subjects: any[] = [
-  { subject_name: 'Lengua', teachers: [] },
-  { subject_name: 'Ciencies Sociales', teachers: [] },
-  { subject_name: 'Matematica', teachers: [] },
-  { subject_name: 'Ciencias Natutales', teachers: [] },
-  { subject_name: 'Tecnologia', teachers: [] },
-  { subject_name: 'Formacion Etica y Ciudadana', teachers: [] },
-  { subject_name: 'Educacion Fisica', teachers: [] },
-  { subject_name: 'Plasitca ', teachers: [] },
-  { subject_name: 'Musica', teachers: [] },
-  { subject_name: 'Observaciones', teachers: [] },
+  { subject_name: 'Lengua'.toLowerCase(), teachers: [] },
+  { subject_name: 'Ciencias_Sociales'.toLowerCase(), teachers: [] },
+  { subject_name: 'Matematica'.toLowerCase(), teachers: [] },
+  { subject_name: 'Ciencias_Naturales'.toLowerCase(), teachers: [] },
+  { subject_name: 'Tecnologia'.toLowerCase(), teachers: [] },
+  { subject_name: 'Formacion_Etica_y_Ciudadana'.toLowerCase(), teachers: [] },
+  { subject_name: 'Educacion_Fisica'.toLowerCase(), teachers: [] },
+  { subject_name: 'Plasitca'.toLowerCase(), teachers: [] },
+  { subject_name: 'Musica'.toLowerCase(), teachers: [] },
+  { subject_name: 'Observaciones'.toLowerCase(), teachers: [] },
 ];
 
 export default {

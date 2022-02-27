@@ -21,7 +21,7 @@ const createAction = async (req: Request, res: Response) => {
 
 const getActions = async (req: Request, res: Response) => {
   try {
-    const actions = Action.find();
+    const actions = await Action.find();
     if (actions) {
       res.status(200).json(actions);
     }
@@ -32,7 +32,7 @@ const getActions = async (req: Request, res: Response) => {
 
 const getActionById = async (req: Request, res: Response) => {
   try {
-    const action = Action.findById(req.params.id);
+    const action = await Action.findById(req.params.id);
     if (action) {
       res.status(200).json(action);
     }
@@ -43,7 +43,7 @@ const getActionById = async (req: Request, res: Response) => {
 
 const updateAction = async (req: Request, res: Response) => {
   try {
-    const action = Action.findByIdAndUpdate(req.params.id, req.body);
+    const action = await Action.findByIdAndUpdate(req.params.id, req.body);
     if (action) {
       res.status(200).json('Action updated!');
     }
@@ -54,7 +54,7 @@ const updateAction = async (req: Request, res: Response) => {
 
 const deleteAction = async (req: Request, res: Response) => {
   try {
-    const action = Action.findByIdAndRemove(req.params.id);
+    const action = await Action.findByIdAndRemove(req.params.id);
     if (action) {
       res.status(200).json('Action deleted!');
     }

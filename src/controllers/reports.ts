@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Types } from 'mongoose';
 
 import Student from '../models/student';
 import Attendance from '../models/attendance';
@@ -38,7 +38,7 @@ const groupBy = (items: any[], key: string) =>
     {}
   );
 
-const generateMonthlyReport = async (month: number, year: number, grade_id: Schema.Types.ObjectId) => {
+const generateMonthlyReport = async (month: number, year: number, grade_id: string) => {
   const report: MonthlyReport = {} as MonthlyReport;
 
   const docProjection = {
@@ -187,7 +187,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: Sche
   return Object.keys(report).map((k: keyof MonthlyReport) => report[k]);
 };
 
-const generateBiMonthlyReport = async (month: number, year: number, student_id: Schema.Types.ObjectId) => {
+const generateBiMonthlyReport = async (month: number, year: number, student_id: Types.ObjectId) => {
   const previousMonth = month === 1 ? 11 : month === 0 ? 10 : month - 2;
   const nextMonth = month === 11 ? 0 : month + 2;
 
@@ -215,7 +215,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
   for (let index = 0; index < subjects.length; index++) {
     const subject = subjects[index];
 
-    if (subject.subject_name === 'Observaciones') {
+    if (subject.subject_name === 'Observaciones'.toLocaleLowerCase()) {
       const studentObservation = await Observation.findOne({
         createdAt: {
           $gte: new Date(year, previousMonth, 1),

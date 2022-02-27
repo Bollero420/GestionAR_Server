@@ -21,7 +21,7 @@ const createSubject = async (req: Request, res: Response) => {
 
 const getSubjects = async (req: Request, res: Response) => {
   try {
-    const subjects = Subject.find();
+    const subjects = await Subject.find();
     if (subjects) {
       res.status(200).json(subjects);
     }
@@ -32,7 +32,7 @@ const getSubjects = async (req: Request, res: Response) => {
 
 const getSubjectById = async (req: Request, res: Response) => {
   try {
-    const subject = Subject.findById(req.params.id);
+    const subject = await Subject.findById(req.params.id);
     if (subject) {
       res.status(200).json(subject);
     }
@@ -43,7 +43,7 @@ const getSubjectById = async (req: Request, res: Response) => {
 
 const updateSubject = async (req: Request, res: Response) => {
   try {
-    const subject = Subject.findByIdAndUpdate(req.params.id, req.body);
+    const subject = await Subject.findByIdAndUpdate(req.params.id, req.body);
     if (subject) {
       res.status(200).json('Subject updated!');
     }
@@ -54,7 +54,7 @@ const updateSubject = async (req: Request, res: Response) => {
 
 const deleteSubject = async (req: Request, res: Response) => {
   try {
-    const subject = Subject.findByIdAndRemove(req.params.id);
+    const subject = await Subject.findByIdAndRemove(req.params.id);
     if (subject) {
       res.status(200).json('Subject deleted!');
     }

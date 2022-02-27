@@ -22,7 +22,7 @@ const createGroup = async (req: Request, res: Response) => {
 
 const getGroups = async (req: Request, res: Response) => {
   try {
-    const groups = Group.find();
+    const groups = await Group.find();
     if (groups) {
       res.status(200).json(groups);
     }
@@ -33,7 +33,7 @@ const getGroups = async (req: Request, res: Response) => {
 
 const getGroupById = async (req: Request, res: Response) => {
   try {
-    const group = Group.findById(req.params.id);
+    const group = await Group.findById(req.params.id);
     if (group) {
       res.status(200).json(group);
     }
@@ -44,7 +44,7 @@ const getGroupById = async (req: Request, res: Response) => {
 
 const updateGroup = async (req: Request, res: Response) => {
   try {
-    const group = Group.findByIdAndUpdate(req.params.id, req.body);
+    const group = await Group.findByIdAndUpdate(req.params.id, req.body);
     if (group) {
       res.status(200).json('Group updated!');
     }
@@ -55,7 +55,7 @@ const updateGroup = async (req: Request, res: Response) => {
 
 const deleteGroup = async (req: Request, res: Response) => {
   try {
-    const group = Group.findByIdAndRemove(req.params.id);
+    const group = await Group.findByIdAndRemove(req.params.id);
     if (group) {
       res.status(200).json('Group deleted!');
     }

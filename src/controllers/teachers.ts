@@ -46,7 +46,7 @@ const createTeacher = async (req: Request, res: Response) => {
 
 const getTeachers = async (req: Request, res: Response) => {
   try {
-    const teachers = Teacher.find();
+    const teachers = await Teacher.find();
     if (teachers) {
       res.status(200).json(teachers);
     }
@@ -57,7 +57,7 @@ const getTeachers = async (req: Request, res: Response) => {
 
 const getTeacherById = async (req: Request, res: Response) => {
   try {
-    const teacher = Teacher.findById(req.params.id);
+    const teacher = await Teacher.findById(req.params.id);
     if (teacher) {
       res.status(200).json(teacher);
     }
@@ -68,7 +68,7 @@ const getTeacherById = async (req: Request, res: Response) => {
 
 const updateTeacher = async (req: Request, res: Response) => {
   try {
-    const teacher = Teacher.findByIdAndUpdate(req.params.id, req.body);
+    const teacher = await Teacher.findByIdAndUpdate(req.params.id, req.body);
     if (teacher) {
       res.status(200).json('Teacher updated!');
     }
@@ -79,7 +79,7 @@ const updateTeacher = async (req: Request, res: Response) => {
 
 const deleteTeacher = async (req: Request, res: Response) => {
   try {
-    const teacher = Teacher.findByIdAndRemove(req.params.id);
+    const teacher = await Teacher.findByIdAndRemove(req.params.id);
     if (teacher) {
       res.status(200).json('Teacher deleted!');
     }
