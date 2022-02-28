@@ -7,6 +7,8 @@ import Grade from '../models/grade';
 import Observation from '../models/observation';
 import SubjectQualification from '../models/subjectQualification';
 
+import { getStudentQualificationAndObseravtions } from '../helpers/db';
+
 const getGradeId = async (gradeData: any) =>
   await Grade.findOne({
     shift: gradeData.shift,
@@ -141,27 +143,28 @@ const createStudent = async (req: Request, res: Response) => {
     await gradeDoc.save();
 
     // create siblings
-    for (let index = 0; index < siblings.length; index++) {
-      const sibling = siblings[index];
+    //? TO.DO store siblings data. do not create new students
+    // for (let index = 0; index < siblings.length; index++) {
+    //   const sibling = siblings[index];
 
-      // get corresponding grade
-      const gradeDoc = await getGradeId(grade);
+    //   // get corresponding grade
+    //   const gradeDoc = await getGradeId(grade);
 
-      // create sibling student
-      const newStudent = Student.create({
-        ...student_common_data,
-        entry_date: new Date(),
-        registration_number: sibling.dni,
-        firstName: sibling.firstName,
-        lastName: sibling.lastName,
-        gender: sibling.gender,
-        birth_date: sibling.birth_date,
-        grade_id: gradeDoc._id,
-      });
+    //   // create sibling student
+    //   const newStudent = Student.create({
+    //     ...student_common_data,
+    //     entry_date: new Date(),
+    //     registration_number: sibling.dni,
+    //     firstName: sibling.firstName,
+    //     lastName: sibling.lastName,
+    //     gender: sibling.gender,
+    //     birth_date: sibling.birth_date,
+    //     grade_id: gradeDoc._id,
+    //   });
 
-      // save sibling student
-      savedStudents = [...savedStudents, newStudent];
-    }
+    //   // save sibling student
+    //   savedStudents = [...savedStudents, newStudent];
+    // }}
 
     // updated studentTutor with objectIds
     for (let index = 0; index < savedTutors.length; index++) {
@@ -181,9 +184,39 @@ const createStudent = async (req: Request, res: Response) => {
 
 const getStudents = async (req: Request, res: Response) => {
   try {
-    const students = await Student.find();
-    if (students) {
-      res.status(200).json(students);
+
+    const { date, grade_id } = req.body
+
+    const formattedDate = new Date(date);
+    const year = formattedDate.getFullYear();
+    const month = formattedDate.getMonth();
+    const day = formattedDate.getDay();
+
+    const previousMonth = day === 1 ? month - 1 : month;
+    const previousYear = day === 1 && month === 0 ? year - 1 : year;
+    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+    
+    const dateProps = {
+      previousYear,
+      previousMonth,
+      previousMountAmountOfDays,
+      year,
+      month,
+      day
+    };
+
+    let mappedStudents: any = [];
+    const students = await Student.find({grade_id});
+
+    for (let index = 0; index < students.length; index++) {
+      const student = students[index];
+      
+      const { isCompleted } = getStudentQualificationAndObseravtions(dateProps, student._id);
+      mappedStudents = [...mappedStudents, {...student, isCompleted}]
+    }
+
+    if (mappedStudents-length > 0) {
+      res.status(200).json(mappedStudents);
     }
   } catch (error) {
     res.status(400).json('Error: ' + error);
@@ -226,6 +259,7 @@ const deleteStudent = async (req: Request, res: Response) => {
 const getStudentQualificationsAndObservations = async (req: Request, res: Response) => {
   try {
     const { id: student_id } = req.params;
+    
     const { date } = req.body;
 
     const formattedDate = new Date(date);
@@ -237,102 +271,16 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
     const previousYear = day === 1 && month === 0 ? year - 1 : year;
     const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
 
-    const observation = await Observation.findOne({
-      student_id,
-      bimonthly_date: {
-        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
-        $lt: new Date(year, month, day),
-      },
-    });
+    const dateProps = {
+      previousYear,
+      previousMonth,
+      previousMountAmountOfDays,
+      year,
+      month,
+      day
+    };
 
-    const qualifications = await SubjectQualification.find({
-      student_id,
-      bimonthly_date: {
-        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
-        $lt: new Date(year, month, day),
-      },
-    }).populate('subject_id');
-
-    let response: any = {};
-
-    if (observation) {
-      response.observation = observation;
-    } else {
-      response.observation = {
-        description: '',
-        worry_and_effort: '',
-        respect_rules: '',
-        solidarity_and_collaboration: '',
-        group_responsibility: '',
-      };
-    }
-
-    if (qualifications.length > 0) {
-      response.qualifications = [
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'lengua',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'ciencias_sociales',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'matematica',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'ciencias_naturales',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'tecnologia',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'formacion_etica_y_ciudadana',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'educacion_fisica',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'plasitca',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'musica',
-          },
-        },
-        {
-          value: '',
-          subject_id: {
-            subject_name: 'observaciones',
-          },
-        },
-      ];
-    } else {
-      response.qualifications = qualifications;
-    }
+    const response = getStudentQualificationAndObseravtions(dateProps, student_id);
 
     res.status(200).json(response);
   } catch (error) {
