@@ -11,9 +11,6 @@ const forms = [
   {
     form_name: 'subject_qualification_and_observations',
   },
-  {
-    form_name: 'profile',
-  },
 ];
 
 const actions = [
@@ -22,7 +19,7 @@ const actions = [
     form_id: 'form_id',
   },
   {
-    action_name: 'update_profile',
+    action_name: 'update_student',
     form_id: 'form_id',
   },
   {

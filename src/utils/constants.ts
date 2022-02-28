@@ -2,6 +2,21 @@ import { RepeatersKey } from '../types/interfaces/IProcessors';
 import { StudentsByAgeKeys } from '../types/interfaces/IProcessors';
 import { IStudent } from '../types/interfaces/IStudent';
 
+const { 
+  JANUAY_HOLIDAYS,
+  FEBRUARY_HOILIDAYS,
+  MARCH_HOLIDAYS,
+  APRIL_HOLIDAYS,
+  MAY_HOLIDAYS,
+  JUNE_HOLIDAYS,
+  JULY_HOLIDAYS,
+  AGUST_HOLIDAYS,
+  SEPTEMBER_HOLIDAYS,
+  OCTOBER_HOLIDAYS,
+  NOVEMBER_HOLIDAYS,
+  DECEMBER_HOLIDAYS
+} = process.env
+
 export const ACCESS_TOKEN_HEADER = 'access-token';
 export const REFRESH_TOKEN_HEADER = 'refresh-token';
 
@@ -61,3 +76,20 @@ export const genderProcessedDataInitialValue = {
   male: 0,
   total: 0,
 };
+
+const currentYear = new Date().getFullYear();
+
+export const availableDays = [
+  new Date(currentYear, 1, 0).getDate() - parseInt(JANUAY_HOLIDAYS),
+  new Date(currentYear, 2, 0).getDate() - parseInt(FEBRUARY_HOILIDAYS),
+  new Date(currentYear, 3, 0).getDate() - parseInt(MARCH_HOLIDAYS),
+  new Date(currentYear, 4, 0).getDate() - parseInt(APRIL_HOLIDAYS),
+  new Date(currentYear, 5, 0).getDate() - parseInt(MAY_HOLIDAYS),
+  new Date(currentYear, 6, 0).getDate() - parseInt(JUNE_HOLIDAYS),
+  new Date(currentYear, 7, 0).getDate() - parseInt(JULY_HOLIDAYS),
+  new Date(currentYear, 8, 0).getDate() - parseInt(AGUST_HOLIDAYS),
+  new Date(currentYear, 9, 0).getDate() - parseInt(SEPTEMBER_HOLIDAYS),
+  new Date(currentYear, 10, 0).getDate() - parseInt(OCTOBER_HOLIDAYS),
+  new Date(currentYear, 11, 0).getDate() - parseInt(NOVEMBER_HOLIDAYS),
+  new Date(currentYear, 0, 0).getDate() - parseInt(DECEMBER_HOLIDAYS)
+];

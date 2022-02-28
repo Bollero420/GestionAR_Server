@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-
 import Form from '../models/form';
 import Action from '../models/action';
 import Group from '../models/group';
@@ -7,35 +5,47 @@ import Grade from '../models/grade';
 import Subject from '../models/subject';
 
 import initialData from './data';
+import { populateActions, populateGroupswithActions } from '../helpers/seed';
 
-// connect to db
-mongoose
-  .connect(`${process.env.DATABASE_URL}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('DB connected'))
-  .catch((err) => console.log('error', err));
-
-const seedDB = async () => {
-  const { forms, actions, groups, grades, subjects } = initialData;
-
-  // reset Collections
+const resetDb = async () => {
   await Form.deleteMany({});
   await Action.deleteMany({});
   await Group.deleteMany({});
   await Grade.deleteMany({});
   await Subject.deleteMany({});
+}
 
-  // set initialData
-  await Form.insertMany(forms);
-  await Action.insertMany(actions);
-  await Group.insertMany(groups);
-  await Grade.insertMany(grades);
-  await Subject.insertMany(subjects);
+const handleSetActions = async (actions: any) => {
+  // get FormsDocs and populate actions with corresponding '_id'
+  const formsDocs = await Form.find().lean(true);
+  const populatedActions = populateActions(formsDocs, actions);
+  // set Actions Data
+  await Action.insertMany(populatedActions);
 };
 
-// finalize connection
-seedDB().then(() => {
-  mongoose.connection.close();
-});
+const handleSetGroups = async (groups: any) => {
+  // get ActionsDocs and populate groups with corresponding Array of '_id'
+  const actionsDocs =  await Action.find().lean(true);
+  const populatedGroupsWithActions = populateGroupswithActions(actionsDocs, groups);
+  // set Groups Data
+  await Group.insertMany(populatedGroupsWithActions);
+}
+
+
+export const seeder = async () => {
+  console.log('seeding');
+  const { forms, actions, groups, grades, subjects } = initialData;
+  // reset Collections
+  await resetDb();
+
+  // set Forms Data
+  await Form.insertMany(forms);
+  // set Actions Data
+  await handleSetActions(actions);
+  // set Groups Data
+  await handleSetGroups(groups);
+  // set Grades Data
+  await Grade.insertMany(grades);
+  // set Subjects Data
+  await Subject.insertMany(subjects);
+};

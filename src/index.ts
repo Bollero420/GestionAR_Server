@@ -4,10 +4,12 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import router from '../src/routes';
 import cookieParser from 'cookie-parser';
+import { seeder } from './_seeds_'
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;
+const runSeeder = process.env.RUN_SEEDER
 
 app.use(cors());
 app.use(cookieParser());
@@ -26,5 +28,11 @@ mongoose
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
+
+if (runSeeder === 'true') {
+  seeder()
+  .then(()=> console.log('finish seeder'))
+  .catch(err => console.log('error ->', err))
+}
 
 export default app;

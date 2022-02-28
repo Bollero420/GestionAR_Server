@@ -30,7 +30,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
 
   const { previousMonth, nextMonth, daysQtyOfTheMonth } = generateDateHelpers(month, year);
 
-  const gradeDoc = await Grade.findById(grade_id).lean();
+  const gradeDoc = await Grade.findById(grade_id).lean(true);
 
   //Del mes anterior
   const previousMonthData = await Student.find(
@@ -42,7 +42,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
       grade_id,
     },
     docProjection
-  ).lean();
+  ).lean(true);
 
   report.previousMonth = processStudentsByGender(previousMonthData);
 
@@ -57,7 +57,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
       grade_id,
     },
     docProjection
-  ).lean();
+  ).lean(true);
 
   report.newThisMonth = processStudentsByGender(newThisMonthData);
 
@@ -71,7 +71,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
       grade_id,
     },
     docProjection
-  ).lean();
+  ).lean(true);
 
   report.goneThisMonth = processStudentsByGender(goneThisMonthData);
 
@@ -168,12 +168,10 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
 };
 
 const generateBiMonthlyReport = async (month: number, year: number, student_id: Types.ObjectId) => {
-  //? TO.DO: store amount of available days per month and use it instead of daysQtyOfTheMonth
-
   const { previousTwoMonth, nextTwoMonth, daysQtyOfTheMonth } = generateDateHelpers(month, year);
 
-  const subjects = await Subject.find().lean();
-  const student = await Student.findById(student_id).lean();
+  const subjects = await Subject.find().lean(true);
+  const student = await Student.findById(student_id).lean(true);
 
   const studentAttendancesDocsQty = await Attendance.countDocuments({
     createdAt: {
@@ -201,7 +199,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
         },
         student_id,
         subject_id: subject._id,
-      }).lean();
+      }).lean(true);
 
       const { description, worry_and_effort, respect_rules, solidarity_and_collaboration, group_responsibility } =
         studentObservation;
@@ -224,7 +222,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
         },
         student_id,
         subject_id: subject._id,
-      }).lean();
+      }).lean(true);
 
       student_qualification = {
         ...student_qualification,
@@ -239,7 +237,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
 const generateAnnuallyReport = async () => {
   let report: any = {};
 
-  const grades = await Grade.find({}, { students: 1, level: 1 }).populate('students').lean();
+  const grades = await Grade.find({}, { students: 1, level: 1 }).populate('students').lean(true);
   const gradesLevels = new Set([...grades.map((grade) => grade.level)]);
 
   const gradesByLevel: StudentsByLevel = groupBy(grades, 'level');
@@ -256,10 +254,10 @@ const generateAnnuallyReport = async () => {
 
   report.genderByGrades = studentsByLevel.map((students: IStudent[]) => processStudentsByGender(students));
 
-  const milk_cup_results = await Student.find({ milk_cup: true }).lean();
+  const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
   const processedMilkCup = processStudentsByGender(milk_cup_results);
 
-  const school_dining_results = await Student.find({ school_dining: true }).lean();
+  const school_dining_results = await Student.find({ school_dining: true }).lean(true);
   const processedDining = processStudentsByGender(school_dining_results);
 
   report.foodServiceByGenders = [{ ...processedMilkCup }, { ...processedDining }];
@@ -274,7 +272,7 @@ const monthlyReport = async (req: any, res: any) => {
     const { month, year } = req.body;
     let report: any = [];
 
-    const grades = await Grade.find().lean();
+    const grades = await Grade.find().lean(true);
     for (let index = 0; index < grades.length; index++) {
       const grade_id = grades[index]._id;
       const data = generateMonthlyReport(month, year, grade_id);
