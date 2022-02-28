@@ -44,19 +44,18 @@ export const processStudentsByGender = (data: DocumentDefinition<IStudent>[]): G
 
 export const processAttendancesByDateAndGender = (
   data: DocumentDefinition<IAttendance>[],
-  daysQtyOfTheMonth: number
 ): GenderProcessedData => {
   const reducedData = data.reduce((prev, current: any) => {
     switch (current.student_id.gender) {
       case GENDER.MASCULINO:
         return {
           ...prev,
-          male: Math.round(current.attendancesAmount / SUBJECT_QTY / daysQtyOfTheMonth),
+          male: prev.male + 1,
         };
       case GENDER.FEMENINO:
         return {
           ...prev,
-          female: Math.round(current.attendancesAmount / SUBJECT_QTY / daysQtyOfTheMonth),
+          female: prev.female + 1,
         };
     }
   }, genderProcessedDataInitialValue);
@@ -65,6 +64,40 @@ export const processAttendancesByDateAndGender = (
 
   return reducedData;
 };
+
+export const processAttendancesByStudentAndGender = (populatedAttendancesArray: any[]) => {
+  const attendancesbyStudent =  populatedAttendancesArray.reduce((acc: any, current: any) => {
+    const student_id = current.student_id._id as string;
+    const docDay = new Date(current.created_at).getDate();
+    const isAlreadyRegistered = acc[student_id] && acc[student_id].some((attendance: any) => new Date(attendance.created_at).getDate() === docDay)  
+    
+    if (!isAlreadyRegistered) {
+      return {
+        ...acc,
+        [student_id]: [...acc[student_id] as any, current]
+      }
+    }
+  },{})
+
+  const attendancesbyStudentGenderTotals =  Object.keys(attendancesbyStudent).reduce((acc: any, sdt_id: any) => {
+    const current = attendancesbyStudent[sdt_id];
+    return {
+      ...acc,
+      [sdt_id]: processAttendancesByDateAndGender(current[sdt_id])
+    }
+  },{});
+
+  const arrayByGender = Object.keys(attendancesbyStudentGenderTotals).reduce((acc: any, sdt_id: any) => {
+    const totalAttendancesByStudent = attendancesbyStudentGenderTotals[sdt_id];
+    return {
+      female: acc.female + totalAttendancesByStudent.female,
+      male: acc.male + totalAttendancesByStudent.male,
+      total: acc.total + totalAttendancesByStudent.total,
+    }
+  }, {})
+
+  return arrayByGender
+}
 
 export const getRepeatersByGender = (gradesLevels: Set<number>, studentsByLevel: any[]) => {
   let repeaters_by_gender = Array(5).fill({});

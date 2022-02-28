@@ -8,10 +8,10 @@ import SubjectQualification from '../models/subjectQualification';
 import Observation from '../models/observation';
 
 import {
-  processAttendancesByDateAndGender,
   processStudentsByGender,
   getRepeatersByGender,
   getStudentsByAgeAndGender,
+  processAttendancesByStudentAndGender,
 } from '../helpers/reports/data_processors';
 
 import { SUBJECT_QTY } from '../utils/constants';
@@ -19,6 +19,7 @@ import { SUBJECT_QTY } from '../utils/constants';
 import { IStudent } from '../types/interfaces/IStudent';
 import { LevelKeys, StudentsByLevel, MonthlyReport } from '../types/interfaces/IProcessors';
 import { generateDateHelpers, groupBy } from '../helpers';
+import attendance from '../models/attendance';
 
 const generateMonthlyReport = async (month: number, year: number, grade_id: string) => {
   const report: MonthlyReport = {} as MonthlyReport;
@@ -83,79 +84,34 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
   };
 
   // Asistencias
-  const attendancesThisMonthData = await Attendance.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: new Date(year, month, 1),
-          $lt: new Date(year, nextMonth, 1),
-        },
-        state: true,
-        student_id: {
-          $in: gradeDoc.students,
-        },
-      },
+  const attendancesThisMonthData = await Attendance.find({
+    createdAt: {
+      $gte: new Date(year, month, 1),
+      $lt: new Date(year, nextMonth, 1),
     },
-    {
-      $group: {
-        _id: '$student_id',
-        attendancesAmount: { $sum: 1 },
-      },
-    },
-    {
-      $lookup: {
-        from: 'Student',
-        localField: 'student_id',
-        foreignField: '_id',
-        as: 'studentData',
-      },
-    },
-    { $unwind: { path: '$student_id' } },
-    {
-      $project: {
-        student_id: {
-          $map: {
-            input: '$_id',
-          },
-        },
-        attendancesAmount: 1,
-      },
-    },
-  ]);
+    state: true,
+    student_id: {
+      $in: gradeDoc.students,
+    }
+  }).populate('student_id').lean(true);;
 
-  report.attendancesThisMonth = processAttendancesByDateAndGender(attendancesThisMonthData, daysQtyOfTheMonth);
+  const attendancesByGender = processAttendancesByStudentAndGender(attendancesThisMonthData);
+
+  report.attendancesThisMonth = attendancesByGender;
 
   //Inasistencias
-  const unAttendancesThisMonthData = await Attendance.aggregate([
-    {
-      $match: {
-        createdAt: {
-          $gte: new Date(year, month, 1),
-          $lt: new Date(year, nextMonth, 1),
-        },
-        state: false,
-        student_id: {
-          $in: gradeDoc.students,
-        },
-      },
+  const unAttendancesThisMonthData = await Attendance.find({
+    createdAt: {
+      $gte: new Date(year, month, 1),
+      $lt: new Date(year, nextMonth, 1),
     },
-    {
-      $group: {
-        _id: 'student_id',
-      },
-    },
-    {
-      $lookup: {
-        from: 'Student',
-        localField: 'student_id',
-        foreignField: '_id',
-        as: 'studentData',
-      },
-    },
-    { $unwind: { path: '$student_id' } },
-  ]);
+    state: false,
+    student_id: {
+      $in: gradeDoc.students,
+    }
+  }).populate('student_id').lean(true);
 
-  report.unAttendancesThisMonth = processAttendancesByDateAndGender(unAttendancesThisMonthData, daysQtyOfTheMonth);
+  report.unAttendancesThisMonth = processAttendancesByStudentAndGender(unAttendancesThisMonthData);
 
   // Asistencia media
   report.attendancesAverage = {
@@ -173,19 +129,28 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
   const subjects = await Subject.find().lean(true);
   const student = await Student.findById(student_id).lean(true);
 
-  const studentAttendancesDocsQty = await Attendance.countDocuments({
+  const studentUnAttendancesDocsQty = await Attendance.find({
     createdAt: {
       $gte: new Date(year, month, 1),
       $lt: new Date(year, nextTwoMonth, 1),
     },
-    state: true,
+    state: false,
     student_id,
   });
 
+  const unAttendancesFromStudent = studentUnAttendancesDocsQty.reduce((acc: any[], current: any) => {
+    const docDay = new Date(current.created_at).getDate();
+    const isAlreadyRegistered = acc.some((attendance: any) => new Date(attendance.created_at).getDate() === docDay);
+    if (!isAlreadyRegistered) {
+      return [...acc, current]
+    }
+  }, [])
+  
+  
   let student_qualification: any = {
     integrated: student.integrated,
     available_days: daysQtyOfTheMonth,
-    attendances: Math.round(studentAttendancesDocsQty / SUBJECT_QTY / daysQtyOfTheMonth),
+    unattendances: unAttendancesFromStudent.length,
   };
 
   for (let index = 0; index < subjects.length; index++) {
@@ -213,7 +178,7 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
         group_responsibility,
       };
     } else {
-      const key = subject.subject_name.replace(/\s/g, '');
+      const key = subject.subject_name;
 
       const studentQualification = await SubjectQualification.findOne({
         createdAt: {
@@ -231,6 +196,9 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
     }
   }
 
+  student_qualification.attendances = student_qualification.available_days - student_qualification.unattendances
+  student_qualification.attendances_average = student_qualification.attendances * 100 / student_qualification.available_days
+  
   return student_qualification;
 };
 
