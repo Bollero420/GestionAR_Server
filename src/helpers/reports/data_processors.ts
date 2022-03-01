@@ -101,11 +101,11 @@ export const processAttendancesByStudentAndGender = (populatedAttendancesArray: 
   return arrayByGender
 }
 
-export const getRepeatersByGender = (gradesLevels: Set<number>, studentsByLevel: any[]) => {
+export const getRepeatersByGender = (gradesLevels: Set<string>, studentsByLevel: any[]) => {
   let repeaters_by_gender = Array(5).fill({});
 
   for (let level of gradesLevels) {
-    const students: IStudent[] = studentsByLevel[level - 1];
+    const students: IStudent[] = studentsByLevel[parseInt(level) - 1];
     const filteredStudents = students.reduce((acc, current) => {
       const key = getRepeatingQuantityKey(current.repeating_quantity);
       return {
@@ -156,11 +156,11 @@ export const getRepeatersByGender = (gradesLevels: Set<number>, studentsByLevel:
   return repeaters_by_gender;
 };
 
-export const getStudentsByAgeAndGender = (gradesLevels: Set<number>, studentsByLevel: any[]) => {
+export const getStudentsByAgeAndGender = (gradesLevels: Set<string>, studentsByLevel: any[]) => {
   let students_by_age = Array(14).fill({});
 
   for (let level of gradesLevels) {
-    const students: IStudent[] = studentsByLevel[level - 1];
+    const students: IStudent[] = studentsByLevel[parseInt(level) - 1];
     const filteredStudents = students.reduce((acc, current) => {
       const key = getAgeKey(getAge(current.birth_date.toDateString()));
       return {

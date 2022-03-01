@@ -25,7 +25,7 @@ const createGrade = async (req: Request, res: Response) => {
 const getGrades = async (req: Request, res: Response) => {
   try {
     const grades = await Grade.find();
-    if (grades) {
+    if (grades.length > 1) {
       res.status(200).json(grades);
     }
   } catch (error) {

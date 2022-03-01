@@ -185,9 +185,9 @@ const createStudent = async (req: Request, res: Response) => {
 const getStudents = async (req: Request, res: Response) => {
   try {
 
-    const { date, grade_id } = req.body
+    const { date, grade_id } = req.query;
 
-    const formattedDate = new Date(date);
+    const formattedDate = new Date(date.toString());
     const year = formattedDate.getFullYear();
     const month = formattedDate.getMonth();
     const day = formattedDate.getDay();
@@ -206,7 +206,7 @@ const getStudents = async (req: Request, res: Response) => {
     };
 
     let mappedStudents: any = [];
-    const students = await Student.find({grade_id});
+    const students = await Student.find({grade_id: grade_id.toString()}).lean(true);
 
     for (let index = 0; index < students.length; index++) {
       const student = students[index];
@@ -215,7 +215,7 @@ const getStudents = async (req: Request, res: Response) => {
       mappedStudents = [...mappedStudents, {...student, isCompleted}]
     }
 
-    if (mappedStudents-length > 0) {
+    if (mappedStudents.length > 0) {
       res.status(200).json(mappedStudents);
     }
   } catch (error) {
@@ -225,7 +225,10 @@ const getStudents = async (req: Request, res: Response) => {
 
 const getStudentById = async (req: Request, res: Response) => {
   try {
-    const student = await Student.findById(req.params.id);
+    const student = await Student.findById(req.params.id)
+    .populate('grade_id')
+    .populate('student_tutors')
+    .lean(true);
     if (student) {
       res.status(200).json(student);
     }
@@ -260,9 +263,9 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
   try {
     const { id: student_id } = req.params;
     
-    const { date } = req.body;
+    const { date } = req.query;
 
-    const formattedDate = new Date(date);
+    const formattedDate = new Date(date.toString());
     const year = formattedDate.getFullYear();
     const month = formattedDate.getMonth();
     const day = formattedDate.getDay();
@@ -280,8 +283,7 @@ const getStudentQualificationsAndObservations = async (req: Request, res: Respon
       day
     };
 
-    const response = getStudentQualificationAndObseravtions(dateProps, student_id);
-
+    const response = await getStudentQualificationAndObseravtions(dateProps, student_id);
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json('Error: ' + error);

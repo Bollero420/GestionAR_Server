@@ -20,7 +20,7 @@ export const groupBy = (items: any[], key: string) =>
   );
 
   export const isQualificationCompleted = (qualifications: any[], observation: any) => {
-    if (Object.keys(observation).some(obsKey => observation[obsKey] === '')) {
+    if (Object.keys(observation)?.some(obsKey => observation[obsKey] === '')) {
       return false
     };
 

@@ -4,6 +4,7 @@ import Group from '../models/group';
 import Grade from '../models/grade';
 import Subject from '../models/subject';
 import User from '../models/user';
+import Student from '../models/student';
 
 import initialData from './data';
 import { populateActions, populateGroupswithActions } from '../helpers/seed';
@@ -48,6 +49,24 @@ export const seeder = async () => {
   await handleSetGroups(groups);
   // set Grades Data
   await Grade.insertMany(grades);
+
+  const firstAMorningGrade = await Grade.findOne({
+    level: '1',
+    shift: 'M',
+    section: 'A' 
+  });
+
+  const students = await Student.find();
+
+  const student = students && students.length > 0 && students[0]
+
+  student.grade_id = firstAMorningGrade._id
+  await student.save();
+
+  firstAMorningGrade.students = [student._id]
+
+  await firstAMorningGrade.save()
+
   // set Subjects Data
   await Subject.insertMany(subjects);
 

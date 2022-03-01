@@ -20,11 +20,11 @@ const StudentSchema = new Schema(
     },
     entry_date: {
       type: Date,
-      required: true,
+      required: false,
     },
     egress_date: {
       type: Date,
-      required: true,
+      required: false,
     },
     registration_number: {
       type: Number,
@@ -75,7 +75,7 @@ const StudentSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'StudentTutor',
-        required: true,
+        required: false,
       },
     ],
   },

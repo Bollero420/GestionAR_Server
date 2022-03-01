@@ -14,12 +14,9 @@ import {
   processAttendancesByStudentAndGender,
 } from '../helpers/reports/data_processors';
 
-import { SUBJECT_QTY } from '../utils/constants';
-
 import { IStudent } from '../types/interfaces/IStudent';
 import { LevelKeys, StudentsByLevel, MonthlyReport } from '../types/interfaces/IProcessors';
 import { generateDateHelpers, groupBy } from '../helpers';
-import attendance from '../models/attendance';
 
 const generateMonthlyReport = async (month: number, year: number, grade_id: string) => {
   const report: MonthlyReport = {} as MonthlyReport;

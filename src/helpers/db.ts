@@ -20,7 +20,7 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
       $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
       $lt: new Date(year, month, day),
     },
-  });
+  }).lean(true);;
 
   const qualifications = await SubjectQualification.find({
     student_id,
@@ -28,7 +28,7 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
       $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
       $lt: new Date(year, month, day),
     },
-  }).populate('subject_id');
+  }).populate('subject_id').lean(true);
 
   let response: any = {};
 
@@ -44,7 +44,7 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
     };
   }
 
-  if (qualifications.length > 0) {
+  if (qualifications.length <= 0) {
     response.qualifications = [
       {
         value: '',
@@ -100,18 +100,12 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
           subject_name: 'musica',
         },
       },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'observaciones',
-        },
-      },
     ];
   } else {
     response.qualifications = qualifications;
   }
 
-  response.isCompleted = isQualificationCompleted(qualifications, observation);
+  response.isCompleted = isQualificationCompleted(response.qualifications, response.observation);
 
   return response
 }

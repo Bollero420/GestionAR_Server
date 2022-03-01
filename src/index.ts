@@ -1,11 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+
 import mongoose from 'mongoose';
 import cors from 'cors';
 import router from '../src/routes';
 import cookieParser from 'cookie-parser';
 import { seeder } from './_seeds_'
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;

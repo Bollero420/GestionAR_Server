@@ -29,9 +29,9 @@ const createAttendance = async (req: Request, res: Response) => {
 
 const getAttendances = async (req: Request, res: Response) => {
   try {
-    const { gradeId, subjectId, date } = req.body;
+    const { gradeId, subjectId, date } = req.query;
 
-    const formattedDate = new Date(date);
+    const formattedDate = new Date(date.toString());
     const year = formattedDate.getFullYear();
     const month = formattedDate.getMonth();
     const day = formattedDate.getDay();

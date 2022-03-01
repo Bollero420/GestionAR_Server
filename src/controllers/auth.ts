@@ -32,7 +32,7 @@ const signIn = async (req: Request, res: Response) => {
     });
 
     if (logUser) {
-      const isPasswordMatch = bcrypt.compare(password, logUser.password);
+      const isPasswordMatch = await bcrypt.compare(password, logUser.password);
 
       if (isPasswordMatch) {
         const access_token = createAccessToken(logUser._id);
@@ -46,13 +46,13 @@ const signIn = async (req: Request, res: Response) => {
           userId: logUser._id,
         });
       } else {
-        res.status(404).json('Error: Wrong Password');
+        res.status(404).json({errorMessage: 'Wrong Password'});
       }
     } else {
-      res.status(404).json('Error: User not found');
+      res.status(404).json({errorMessage: 'User not found'});
     }
   } catch (error) {
-    res.status(400).json(`Error: ${error.message}`);
+    res.status(400).json({errorMessage: error.message});
   }
 };
 
