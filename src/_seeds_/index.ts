@@ -3,6 +3,7 @@ import Action from '../models/action';
 import Group from '../models/group';
 import Grade from '../models/grade';
 import Subject from '../models/subject';
+import User from '../models/user';
 
 import initialData from './data';
 import { populateActions, populateGroupswithActions } from '../helpers/seed';
@@ -13,11 +14,12 @@ const resetDb = async () => {
   await Group.deleteMany({});
   await Grade.deleteMany({});
   await Subject.deleteMany({});
+  await User.deleteMany({});
 }
 
 const handleSetActions = async (actions: any) => {
   // get FormsDocs and populate actions with corresponding '_id'
-  const formsDocs = await Form.find().lean(true);
+  const formsDocs = await Form.find().lean(true);;
   const populatedActions = populateActions(formsDocs, actions);
   // set Actions Data
   await Action.insertMany(populatedActions);
@@ -48,4 +50,11 @@ export const seeder = async () => {
   await Grade.insertMany(grades);
   // set Subjects Data
   await Subject.insertMany(subjects);
+
+  await User.create({
+    username: 'admin',
+    password: 'admin',
+    emailAddress: 'admin@mail.com',
+  });
+  
 };

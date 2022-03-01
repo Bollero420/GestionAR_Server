@@ -211,7 +211,7 @@ const getStudents = async (req: Request, res: Response) => {
     for (let index = 0; index < students.length; index++) {
       const student = students[index];
       
-      const { isCompleted } = getStudentQualificationAndObseravtions(dateProps, student._id);
+      const { isCompleted } = await getStudentQualificationAndObseravtions(dateProps, student._id);
       mappedStudents = [...mappedStudents, {...student, isCompleted}]
     }
 

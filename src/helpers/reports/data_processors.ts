@@ -34,6 +34,7 @@ export const processStudentsByGender = (data: DocumentDefinition<IStudent>[]): G
           ...prev,
           female: prev.female++,
         };
+      default: return {...prev}
     }
   }, genderProcessedDataInitialValue);
 
@@ -57,6 +58,7 @@ export const processAttendancesByDateAndGender = (
           ...prev,
           female: prev.female + 1,
         };
+      default: return {...prev}
     }
   }, genderProcessedDataInitialValue);
 

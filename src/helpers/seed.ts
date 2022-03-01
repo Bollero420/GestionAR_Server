@@ -1,24 +1,24 @@
 export const populateActions = (formsDocs: any[], actions: any[]) => {
-  const studentForm = formsDocs.find(doc => doc.form_name = 'student');
-  const attendanceForm =  formsDocs.find(doc => doc.form_name = 'attendance');
-  const subjectQForm = formsDocs.find(doc => doc.form_name = 'subject_qualification');
-  const subjectQAndObsForm = formsDocs.find(doc => doc.form_name = 'subject_qualification_and_observations');
-  
+  const studentFormID = formsDocs.find(doc => doc.form_name === 'student')._id;
+  const attendanceFormID =  formsDocs.find(doc => doc.form_name === 'attendance')._id;
+  const subjectQFormID = formsDocs.find(doc => doc.form_name === 'subject_qualification')._id;
+  const subjectQAndObsFormID = formsDocs.find(doc => doc.form_name === 'subject_qualification_and_observations')._id;
+
   const getFormIdByActionName = (actionName:string) => {
     if (actionName.includes('student')) {
-      return studentForm._id
+      return studentFormID
     };
     
     if (actionName.includes('attendance')) {
-      return attendanceForm._id
+      return attendanceFormID
     };
     
     if (actionName.includes('subject_qualification') && !actionName.includes('subject_qualification_and_observations') ) {
-      return subjectQForm._id
+      return subjectQFormID
     };
 
     if (actionName.includes('subject_qualification_and_observations')) {
-      return subjectQAndObsForm._id
+      return subjectQAndObsFormID
     }
   }
 
@@ -58,10 +58,16 @@ export const populateGroupswithActions = (actions: any[], groups: any[]) => {
       case forms_ids.subjectQAndObs:
         return {
           ...acc,
-          subjectQAndObs: [...acc.subjectQAndObs, current]
+          subjectQAndObs: [...acc.subjectQAndObs, current._id]
         }
+      default: return { ...acc }
       }
-  },{});
+  },{
+    student: [],
+    attendance: [],
+    subjectQ: [],
+    subjectQAndObs: []
+  });
 
   const {
     student: studentActions,
@@ -73,11 +79,11 @@ export const populateGroupswithActions = (actions: any[], groups: any[]) => {
   const getActionsdByGroupName = (groupName:string) => {
     switch (groupName) {
       case 'teachers':
-        return [...studentActions, ...attendanceActions, subjectQActions, subjectQAndObsActions]
+        return [...studentActions, ...attendanceActions, ...subjectQActions, ...subjectQAndObsActions]
       case 'students':
         return []
       case 'administrators':
-        return [...studentActions, ...attendanceActions, subjectQActions, subjectQAndObsActions]
+        return [...studentActions, ...attendanceActions, ...subjectQActions, ...subjectQAndObsActions]
     }
   }
 
