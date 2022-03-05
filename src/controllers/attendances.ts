@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 
 import Attendance from '../models/attendance';
 import Grade from '../models/grade';
@@ -38,19 +39,19 @@ const getAttendances = async (req: Request, res: Response) => {
 
     const previousMonth = day === 1 ? month - 1 : month;
     const previousYear = day === 1 && month === 0 ? year - 1 : year;
-    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+    const previousDay = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
 
     const gradeDoc = await Grade.findById(gradeId).populate('students');
 
-    const studentIds = gradeDoc.students.map((s: any) => s._id);
+    const studentIds = gradeDoc.students.map((s: any) => Types.ObjectId(s._id));
 
     const attendances = await Attendance.find({
       createdAt: {
-        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
+        $gte: new Date(previousYear, previousMonth, previousDay),
         $lt: new Date(year, month, day),
       },
       student_id: { $in: studentIds },
-      subjectId,
+      subject_id: subjectId.toString(),
     }).populate('student_id');
 
     if (attendances.length > 0) {
@@ -106,8 +107,8 @@ const updateAttendances = async (req: Request, res: Response) => {
 
     for (let index = 0; index < attendances.length; index++) {
       const attendance = attendances[index];
-
-      await Attendance.findByIdAndUpdate(attendance._id, attendance);
+      console.log({attendance})
+      await Attendance.findByIdAndUpdate(Types.ObjectId(attendance._id), {state: attendance.state});
     }
     res.status(200).json('Attendances updated!');
   } catch (error) {

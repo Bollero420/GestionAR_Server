@@ -5,6 +5,8 @@ import Grade from '../models/grade';
 import Subject from '../models/subject';
 import User from '../models/user';
 import Student from '../models/student';
+import SubjectQualification from '../models/subjectQualification';
+import Observation from '../models/observation';
 
 import initialData from './data';
 import { populateActions, populateGroupswithActions } from '../helpers/seed';
@@ -16,6 +18,8 @@ const resetDb = async () => {
   await Grade.deleteMany({});
   await Subject.deleteMany({});
   await User.deleteMany({});
+  await SubjectQualification.deleteMany({});
+  await Observation.deleteMany({});
 }
 
 const handleSetActions = async (actions: any) => {

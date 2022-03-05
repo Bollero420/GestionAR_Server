@@ -298,24 +298,29 @@ const generateStudentQualificationsAndObservations = async (req: Request, res: R
     for (let index = 0; index < qualifications.length; index++) {
       const qualification = qualifications[index];
 
-      const { subject_id, value } = qualification;
+      const { subject_id, value, bimonthly_date } = qualification;
 
       const newQualification = new SubjectQualification({
         student_id,
         subject_id,
         value,
+        bimonthly_date
       });
 
       await newQualification.save();
     }
 
     const obs = new Observation({
+      student_id,
       description: observation.description,
       worry_and_effort: observation.worry_and_effort,
       respect_rules: observation.respect_rules,
       solidarity_and_collaboration: observation.solidarity_and_collaboration,
       group_responsibility: observation.group_responsibility,
+      subject_id: observation.subject_id,
+      bimonthly_date: observation.bimonthly_date
     });
+
     await obs.save();
   } catch (error) {
     res.status(400).json('Error: ' + error);
@@ -330,13 +335,12 @@ const updateStudentQualificationsAndObservations = async (req: Request, res: Res
     for (let index = 0; index < qualifications.length; index++) {
       const qualification = qualifications[index];
 
-      const { bimonthly_date, value } = qualification;
+      const { value } = qualification;
 
       await SubjectQualification.findByIdAndUpdate(
         qualification?._id,
         {
           value,
-          bimonthly_date,
           student_id: Types.ObjectId(student_id),
           subject_id: Types.ObjectId(qualification.subject_id),
         },
@@ -348,8 +352,6 @@ const updateStudentQualificationsAndObservations = async (req: Request, res: Res
       observation?._id,
       {
         ...observation,
-        student_id: Types.ObjectId(student_id),
-        subject_id: Types.ObjectId(student_id),
       },
       { upsert: true }
     );

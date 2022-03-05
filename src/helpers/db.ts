@@ -2,6 +2,7 @@ import { isQualificationCompleted } from "../helpers";
 
 import Observation from '../models/observation';
 import SubjectQualification from '../models/subjectQualification';
+import Subject from "../models/subject";
 
 
 export const getStudentQualificationAndObseravtions = async (dateProps: any, student_id: string) => {
@@ -32,6 +33,7 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
 
   let response: any = {};
 
+  const subjects = await Subject.find().populate('subject_id').lean(true);
   if (observation) {
     response.observation = observation;
   } else {
@@ -41,66 +43,27 @@ export const getStudentQualificationAndObseravtions = async (dateProps: any, stu
       respect_rules: '',
       solidarity_and_collaboration: '',
       group_responsibility: '',
+      bimonthly_date: new Date(),
+      subject_id: subjects.find(subject => subject.subject_name === 'observaciones')._id
     };
   }
 
   if (qualifications.length <= 0) {
-    response.qualifications = [
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'lengua',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'ciencias_sociales',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'matematica',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'ciencias_naturales',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'tecnologia',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'formacion_etica_y_ciudadana',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'educacion_fisica',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'plasitca',
-        },
-      },
-      {
-        value: '',
-        subject_id: {
-          subject_name: 'musica',
-        },
-      },
-    ];
+    const result = subjects.reduce((acc, subject) => {
+      if (subject.subject_name !== 'observaciones') {
+        return [...acc, {
+          value: '',
+          bimonthly_date: new Date(),
+          subject_id: {
+            _id: subject._id,
+            subject_name: subject.subject_name,
+          }}]
+        } else {
+          return acc
+        }
+    },[])
+    response.qualifications = [...result]
+
   } else {
     response.qualifications = qualifications;
   }
