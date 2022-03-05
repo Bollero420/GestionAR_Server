@@ -77,7 +77,7 @@ export const seeder = async () => {
   await User.create({
     username: 'admin',
     password: 'admin',
-    emailAddress: 'admin@mail.com',
+    email_address: 'admin@mail.com',
   });
   
 };

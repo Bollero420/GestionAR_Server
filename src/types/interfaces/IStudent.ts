@@ -16,6 +16,5 @@ export interface IStudent extends IPerson {
   school_dining?: boolean;
   milk_cup?: boolean;
   repeating_quantity: number;
-  emailAddress: string;
   student_tutors: Types.ObjectId[];
 }

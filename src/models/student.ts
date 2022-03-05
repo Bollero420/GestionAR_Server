@@ -67,10 +67,6 @@ const StudentSchema = new Schema(
       required: false,
       default: 0,
     },
-    emailAddress: {
-      type: String,
-      required: true,
-    },
     student_tutors: [
       {
         type: Schema.Types.ObjectId,
@@ -109,7 +105,7 @@ StudentSchema.post('create', async function (student: IStudent, next) {
     username,
     password: `${student.lastName[0]}${student.dni}`,
     group_id: group._id,
-    emailAddress: student.emailAddress,
+    email_address: student.email_address,
   });
 
   await newUser.save();

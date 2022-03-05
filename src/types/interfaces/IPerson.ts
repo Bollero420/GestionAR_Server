@@ -12,6 +12,7 @@ export interface IPerson extends Document {
   gender: string;
   alternative_phone: string;
   user_id: Schema.Types.ObjectId;
+  email_address: string;
 }
 
 export enum GENDER {
@@ -63,5 +64,9 @@ export const PersonSchema = {
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+  },
+  email_address: {
+    type: String,
+    required: false,
   },
 };

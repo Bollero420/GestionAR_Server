@@ -83,7 +83,7 @@ const createStudent = async (req: Request, res: Response) => {
     // set default values for siblings and main student
     const student_common_data: any = {
       student_tutors: savedTutors.map((sT) => sT._id),
-      emailAddress,
+      email_address: emailAddress,
       location,
       country,
       previous_school,
