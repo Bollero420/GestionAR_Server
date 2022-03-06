@@ -12,12 +12,12 @@ import initialData from './data';
 import { populateActions, populateGroupswithActions } from '../helpers/seed';
 
 const resetDb = async () => {
+  await User.deleteMany({});
   await Form.deleteMany({});
   await Action.deleteMany({});
   await Group.deleteMany({});
   await Grade.deleteMany({});
   await Subject.deleteMany({});
-  await User.deleteMany({});
   await SubjectQualification.deleteMany({});
   await Observation.deleteMany({});
 }

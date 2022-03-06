@@ -46,13 +46,13 @@ const signIn = async (req: Request, res: Response) => {
           userId: logUser._id,
         });
       } else {
-        res.status(404).json({errorMessage: 'Wrong Password'});
+        res.status(400).send('Contraseña Incorrecta');
       }
     } else {
-      res.status(404).json({errorMessage: 'User not found'});
+      res.status(404).send('User not found');
     }
   } catch (error) {
-    res.status(400).json({errorMessage: error.message});
+    res.status(500).json({errorMessage: error.message});
   }
 };
 
