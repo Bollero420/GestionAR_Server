@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import SubjectQualification from '../models/subjectQualification';
 import Grade from '../models/grade';
 
+import { useDateHelpersByDate } from '../helpers';
+
 const createSubjectQualification = async (req: Request, res: Response) => {
   const { student_id, subject_id, bimonthly_date, value } = req.body;
 
@@ -27,22 +29,15 @@ const getSubjectQualifications = async (req: Request, res: Response) => {
   try {
     const { gradeId, subjectId, date } = req.body;
 
-    const formattedDate = new Date(date);
-    const year = formattedDate.getFullYear();
-    const month = formattedDate.getMonth();
-    const day = formattedDate.getDay();
-
-    const previousMonth = day === 1 ? month - 1 : month;
-    const previousYear = day === 1 && month === 0 ? year - 1 : year;
-    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+    const { year, month, nextYear, nextMonth } = useDateHelpersByDate(date.toString());
 
     const gradeDoc = await Grade.findById(gradeId).populate('students');
     const studentIds = gradeDoc.students.map((s: any) => s._id);
 
     const qualifications = await SubjectQualification.find({
       bimonthly_date: {
-        $gte: new Date(previousYear, previousMonth, previousMountAmountOfDays),
-        $lt: new Date(year, month, day),
+        $gte: new Date(year, month),
+        $lt: new Date(nextYear, nextMonth),
       },
       student_id: { $in: studentIds },
       subjectId,

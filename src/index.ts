@@ -6,19 +6,18 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import router from '../src/routes';
 import cookieParser from 'cookie-parser';
-import { seeder } from './_seeds_'
+import { seeder } from './_seeds_';
 
 const app = express();
 const port = process.env.PORT || 4000;
-const runSeeder = process.env.RUN_SEEDER
+const runSeeder = process.env.RUN_SEEDER;
 
-app.use(cors({credentials: true, origin: "http://localhost:3000"}));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
-
 
 mongoose
   .connect(`${process.env.DATABASE_URL}`, {
@@ -34,8 +33,8 @@ app.listen(port, () => {
 
 if (runSeeder === 'true') {
   seeder()
-  .then(()=> console.log('finish seeder'))
-  .catch(err => console.log('error ->', err))
+    .then(() => console.log('finish seeder'))
+    .catch((err) => console.log('error ->', err));
 }
 
 export default app;

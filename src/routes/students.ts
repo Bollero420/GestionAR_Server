@@ -17,7 +17,7 @@ const {
 const router = Router();
 
 router.get('/', authenticatedRoutes, getStudents);
-router.post('/add', authenticatedRoutes, createStudent);
+router.post('/add', createStudent);
 router.get('/:id', authenticatedRoutes, getStudentById);
 router.put('/:id', authenticatedRoutes, updateStudent);
 router.delete('/:id', authenticatedRoutes, deleteStudent);

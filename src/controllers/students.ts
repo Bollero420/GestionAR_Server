@@ -7,7 +7,7 @@ import Grade from '../models/grade';
 import Observation from '../models/observation';
 import SubjectQualification from '../models/subjectQualification';
 
-import { getStudentQualificationAndObseravtions } from '../helpers/db';
+import { getStudentQualificationAndObservations, userFactory } from '../helpers/db';
 
 const getGradeId = async (gradeData: any) =>
   await Grade.findOne({
@@ -48,7 +48,7 @@ const createStudent = async (req: Request, res: Response) => {
       disability_type,
     } = req.body;
 
-    // initialize array of savedStudentTutors
+    // initialize array of savedStudent and Tutors
     let savedTutors: any[] = [];
     let savedStudents: any[] = [];
 
@@ -82,7 +82,6 @@ const createStudent = async (req: Request, res: Response) => {
 
     // set default values for siblings and main student
     const student_common_data: any = {
-      student_tutors: savedTutors.map((sT) => sT._id),
       email_address: emailAddress,
       location,
       country,
@@ -134,9 +133,11 @@ const createStudent = async (req: Request, res: Response) => {
       disability_type,
       dni,
       grade_id: gradeDoc._id,
+      student_tutors: savedTutors.map((sT) => sT._id),
     });
 
-    savedStudents = [...savedStudents, newStudent];
+    //! create user after student is created
+    userFactory('student', newStudent);
 
     // add student to grade
     gradeDoc.students = [...gradeDoc.students, newStudent._id];
@@ -144,6 +145,7 @@ const createStudent = async (req: Request, res: Response) => {
 
     // create siblings
     //? TO.DO store siblings data. do not create new students
+    //? Should we look for existing student documents if already there, maybe by DNI.
     // for (let index = 0; index < siblings.length; index++) {
     //   const sibling = siblings[index];
 
@@ -170,8 +172,9 @@ const createStudent = async (req: Request, res: Response) => {
     for (let index = 0; index < savedTutors.length; index++) {
       const savedTutor = savedTutors[index];
 
-      savedTutor.students = savedStudents.map((sT) => sT._id);
-      await savedTutor.save();
+      await StudentTutor.findByIdAndUpdate(savedTutor._id, {
+        students: [...savedTutor.students, newStudent._id],
+      });
     }
 
     if (newStudent && savedTutors.length > 0) {
@@ -184,39 +187,22 @@ const createStudent = async (req: Request, res: Response) => {
 
 const getStudents = async (req: Request, res: Response) => {
   try {
-
     const { date, grade_id } = req.query;
 
-    const formattedDate = new Date(date.toString());
-    const year = formattedDate.getFullYear();
-    const month = formattedDate.getMonth();
-    const day = formattedDate.getDay();
-
-    const previousMonth = day === 1 ? month - 1 : month;
-    const previousYear = day === 1 && month === 0 ? year - 1 : year;
-    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
-    
-    const dateProps = {
-      previousYear,
-      previousMonth,
-      previousMountAmountOfDays,
-      year,
-      month,
-      day
-    };
-
     let mappedStudents: any = [];
-    const students = await Student.find({grade_id: grade_id.toString()}).lean(true);
+    const students = await Student.find({ grade_id: grade_id.toString() }).lean(true);
 
     for (let index = 0; index < students.length; index++) {
       const student = students[index];
-      
-      const { isCompleted } = await getStudentQualificationAndObseravtions(dateProps, student._id);
-      mappedStudents = [...mappedStudents, {...student, isCompleted}]
+
+      const { isCompleted } = await getStudentQualificationAndObservations(date.toString(), student._id);
+      mappedStudents = [...mappedStudents, { ...student, isCompleted }];
     }
 
     if (mappedStudents.length > 0) {
       res.status(200).json(mappedStudents);
+    } else {
+      res.status(404).json([]);
     }
   } catch (error) {
     res.status(400).json('Error: ' + error);
@@ -225,10 +211,7 @@ const getStudents = async (req: Request, res: Response) => {
 
 const getStudentById = async (req: Request, res: Response) => {
   try {
-    const student = await Student.findById(req.params.id)
-    .populate('grade_id')
-    .populate('student_tutors')
-    .lean(true);
+    const student = await Student.findById(req.params.id).populate('grade_id').populate('student_tutors').lean(true);
     if (student) {
       res.status(200).json(student);
     }
@@ -262,28 +245,10 @@ const deleteStudent = async (req: Request, res: Response) => {
 const getStudentQualificationsAndObservations = async (req: Request, res: Response) => {
   try {
     const { id: student_id } = req.params;
-    
+
     const { date } = req.query;
 
-    const formattedDate = new Date(date.toString());
-    const year = formattedDate.getFullYear();
-    const month = formattedDate.getMonth();
-    const day = formattedDate.getDay();
-
-    const previousMonth = day === 1 ? month - 1 : month;
-    const previousYear = day === 1 && month === 0 ? year - 1 : year;
-    const previousMountAmountOfDays = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
-
-    const dateProps = {
-      previousYear,
-      previousMonth,
-      previousMountAmountOfDays,
-      year,
-      month,
-      day
-    };
-
-    const response = await getStudentQualificationAndObseravtions(dateProps, student_id);
+    const response = await getStudentQualificationAndObservations(date.toString(), student_id);
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json('Error: ' + error);
@@ -304,7 +269,7 @@ const generateStudentQualificationsAndObservations = async (req: Request, res: R
         student_id,
         subject_id,
         value,
-        bimonthly_date
+        bimonthly_date,
       });
 
       await newQualification.save();
@@ -318,7 +283,7 @@ const generateStudentQualificationsAndObservations = async (req: Request, res: R
       solidarity_and_collaboration: observation.solidarity_and_collaboration,
       group_responsibility: observation.group_responsibility,
       subject_id: observation.subject_id,
-      bimonthly_date: observation.bimonthly_date
+      bimonthly_date: observation.bimonthly_date,
     });
 
     await obs.save();

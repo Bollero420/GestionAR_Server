@@ -3,9 +3,6 @@ import { Schema, model } from 'mongoose';
 import { PersonSchema } from '../types/interfaces/IPerson';
 import { IStudent } from '../types/interfaces/IStudent';
 
-import User from './user';
-import Group from './group';
-
 const StudentSchema = new Schema(
   {
     ...PersonSchema,
@@ -80,36 +77,5 @@ const StudentSchema = new Schema(
     versionKey: false,
   }
 );
-
-// automatically create user
-StudentSchema.post('create', async function (student: IStudent, next) {
-  // get corresponding group id
-  const group = await Group.findOne({
-    group_name: 'students',
-  });
-
-  // create username var
-  let username = `${student.firstName[0]}${student.lastName}`;
-
-  // check if user exists
-  const user = await User.findOne({
-    username,
-  });
-
-  if (user) {
-    // if user already exists set fallback username
-    username = `${student.firstName.substring(0, 2)}${student.lastName}`;
-  }
-
-  const newUser = new User({
-    username,
-    password: `${student.lastName[0]}${student.dni}`,
-    group_id: group._id,
-    email_address: student.email_address,
-  });
-
-  await newUser.save();
-  next();
-});
 
 export default model<IStudent>('Student', StudentSchema);

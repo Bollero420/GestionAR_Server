@@ -4,6 +4,8 @@ import { Types } from 'mongoose';
 import Attendance from '../models/attendance';
 import Grade from '../models/grade';
 
+import { useDateHelpersByDate } from '../helpers';
+
 const createAttendance = async (req: Request, res: Response) => {
   try {
     const { attendances } = req.body;
@@ -32,14 +34,7 @@ const getAttendances = async (req: Request, res: Response) => {
   try {
     const { gradeId, subjectId, date } = req.query;
 
-    const formattedDate = new Date(date.toString());
-    const year = formattedDate.getFullYear();
-    const month = formattedDate.getMonth();
-    const day = formattedDate.getDay();
-
-    const previousMonth = day === 1 ? month - 1 : month;
-    const previousYear = day === 1 && month === 0 ? year - 1 : year;
-    const previousDay = day === 1 ? new Date(previousYear, month, 0).getDate() : day - 1;
+    const { year, month, day, nextYear, nextMonth, nextDay } = useDateHelpersByDate(date.toString());
 
     const gradeDoc = await Grade.findById(gradeId).populate('students');
 
@@ -47,8 +42,8 @@ const getAttendances = async (req: Request, res: Response) => {
 
     const attendances = await Attendance.find({
       createdAt: {
-        $gte: new Date(previousYear, previousMonth, previousDay),
-        $lt: new Date(year, month, day),
+        $gte: new Date(year, month, day),
+        $lt: new Date(nextYear, nextMonth, nextDay),
       },
       student_id: { $in: studentIds },
       subject_id: subjectId.toString(),
@@ -107,8 +102,7 @@ const updateAttendances = async (req: Request, res: Response) => {
 
     for (let index = 0; index < attendances.length; index++) {
       const attendance = attendances[index];
-      console.log({attendance})
-      await Attendance.findByIdAndUpdate(Types.ObjectId(attendance._id), {state: attendance.state});
+      await Attendance.findByIdAndUpdate(Types.ObjectId(attendance._id), { state: attendance.state });
     }
     res.status(200).json('Attendances updated!');
   } catch (error) {

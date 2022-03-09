@@ -1,14 +1,14 @@
 import { availableDays } from '../utils/constants';
 
 export const generateDateHelpers = (month = 0, year = 0, day = 0) => ({
-    previousMonth: month === 0 ? 11 : month - 1,
-    nextMonth: month === 11 ? 0 : month + 1,
-      //? TO.DO: store amount of available days per month and use it instead of daysQtyOfTheMonth.
-      // Add a new collection for StudentYear? to include this kind of information.
-    daysQtyOfTheMonth: availableDays[month],
-    previousTwoMonth : month === 1 ? 11 : month === 0 ? 10 : month - 2,
-    nextTwoMonth: month === 11 ? 1 :  month === 10 ? 0 : month + 2
-  });
+  previousMonth: month === 0 ? 11 : month - 1,
+  nextMonth: month === 11 ? 0 : month + 1,
+  //? TO.DO: store amount of available days per month and use it instead of daysQtyOfTheMonth.
+  // Add a new collection for StudentYear? to include this kind of information.
+  daysQtyOfTheMonth: availableDays[month],
+  previousTwoMonth: month === 1 ? 11 : month === 0 ? 10 : month - 2,
+  nextTwoMonth: month === 11 ? 1 : month === 10 ? 0 : month + 2,
+});
 
 export const groupBy = (items: any[], key: string) =>
   items.reduce(
@@ -19,14 +19,50 @@ export const groupBy = (items: any[], key: string) =>
     {}
   );
 
-  export const isQualificationCompleted = (qualifications: any[], observation: any) => {
-    if (Object.keys(observation)?.some(obsKey => observation[obsKey] === '')) {
-      return false
-    };
+export const isQualificationCompleted = (qualifications: any[], observation: any) => {
+  if (Object.keys(observation)?.some((obsKey) => observation[obsKey] === '')) {
+    return false;
+  }
 
-    if (qualifications.some((qual: any) => !qual.value)) {
-      return false
-    }
+  if (qualifications.some((qual: any) => !qual.value)) {
+    return false;
+  }
 
-    return true
-  } 
+  return true;
+};
+
+export const useDateHelpersByDate = (date: string) => {
+  const formattedDate = new Date(date.toString());
+
+  // Get current date values
+  const year = new Date(date.toString()).getFullYear();
+  const month = new Date(date.toString()).getMonth();
+  const day = new Date(date.toString()).getDate();
+
+  // Get future date values
+  // si es el ultimo dia del ultimo mes, entonces es year + 1
+  const nextYear = day === new Date(year, 12, 0).getDate() && month === 11 ? year + 1 : year;
+  // si es el ultimo dia del mes, entonces es month + 1
+  const nextMonth = day === new Date(year, month + 1, 0).getDate() ? month + 1 : month;
+  // si es el ultimo dia del mes devolvemos 1
+  const nextDay = day + 1;
+
+  //Get past date values
+  const previousMonth = day === 1 ? (month === 0 ? 11 : month - 1) : month;
+  const previousYear = day === 1 && month === 0 ? year - 1 : year;
+  const previousDay = day === 1 ? new Date(year, month, 0).getDate() : day - 1;
+
+  return {
+    date,
+    formattedDate,
+    year,
+    month,
+    day,
+    previousMonth,
+    previousYear,
+    previousDay,
+    nextMonth,
+    nextYear,
+    nextDay,
+  };
+};
