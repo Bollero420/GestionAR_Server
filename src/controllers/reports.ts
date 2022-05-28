@@ -89,8 +89,10 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
     state: true,
     student_id: {
       $in: gradeDoc.students,
-    }
-  }).populate('student_id').lean(true);;
+    },
+  })
+    .populate('student_id')
+    .lean(true);
 
   const attendancesByGender = processAttendancesByStudentAndGender(attendancesThisMonthData);
 
@@ -105,8 +107,10 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
     state: false,
     student_id: {
       $in: gradeDoc.students,
-    }
-  }).populate('student_id').lean(true);
+    },
+  })
+    .populate('student_id')
+    .lean(true);
 
   report.unAttendancesThisMonth = processAttendancesByStudentAndGender(unAttendancesThisMonthData);
 
@@ -139,11 +143,10 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
     const docDay = new Date(current.created_at).getDate();
     const isAlreadyRegistered = acc.some((attendance: any) => new Date(attendance.created_at).getDate() === docDay);
     if (!isAlreadyRegistered) {
-      return [...acc, current]
+      return [...acc, current];
     }
-  }, [])
-  
-  
+  }, []);
+
   let student_qualification: any = {
     integrated: student.integrated,
     available_days: daysQtyOfTheMonth,
@@ -193,9 +196,10 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
     }
   }
 
-  student_qualification.attendances = student_qualification.available_days - student_qualification.unattendances
-  student_qualification.attendances_average = student_qualification.attendances * 100 / student_qualification.available_days
-  
+  student_qualification.attendances = student_qualification.available_days - student_qualification.unattendances;
+  student_qualification.attendances_average =
+    (student_qualification.attendances * 100) / student_qualification.available_days;
+
   return student_qualification;
 };
 
@@ -230,11 +234,22 @@ const generateAnnuallyReport = async () => {
   report.repeatersByGender = getRepeatersByGender(gradesLevels, studentsByLevel);
 
   report.studentsByAgeAndGender = getStudentsByAgeAndGender(gradesLevels, studentsByLevel);
+
+  // report.studentsByCountry = getStudentsByCountry(gradesLevels, studentsByLevel);
+
+  // anual inicial:
+  /*
+    genderByGrades
+    foodServiceByGenders
+    repeatersByGender
+    studentsByAgeAndGender
+    studentsByCountry
+  */
 };
 
 const monthlyReport = async (req: any, res: any) => {
   try {
-    const { month, year } = req.body;
+    const { month, year } = req.query;
     let report: any = [];
 
     const grades = await Grade.find().lean(true);
@@ -255,7 +270,7 @@ const monthlyReport = async (req: any, res: any) => {
 
 const bimonthlyReport = async (req: any, res: any) => {
   try {
-    const { month, year, grade_id } = req.body;
+    const { month, year, grade_id } = req.query;
     let report: any = [];
 
     const gradeDoc = await Grade.findById(grade_id);
@@ -280,12 +295,9 @@ const bimonthlyReport = async (req: any, res: any) => {
 
 const annuallyReport = async (req: any, res: any) => {
   try {
-    const { month, year } = req.body;
     const report = generateAnnuallyReport();
     res.status(200).json({
       data: report,
-      month,
-      year,
     });
   } catch (error) {
     res.status(500).json('Error: ' + error);

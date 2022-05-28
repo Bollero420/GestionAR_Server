@@ -1,5 +1,9 @@
-import Grade from '../models/grade';
 import { Request, Response } from 'express';
+
+import Grade from '../models/grade';
+import { IGrade } from '../types/interfaces/IGrade';
+
+import { sortGrades } from '../helpers';
 
 const createGrade = async (req: Request, res: Response) => {
   const { shift, section, level, teachers, students } = req.body;
@@ -24,8 +28,11 @@ const createGrade = async (req: Request, res: Response) => {
 
 const getGrades = async (req: Request, res: Response) => {
   try {
-    const grades = await Grade.find();
+    const grades = await Grade.find().lean(true);
+
     if (grades.length > 1) {
+      sortGrades(grades as IGrade[]);
+
       res.status(200).json(grades);
     }
   } catch (error) {

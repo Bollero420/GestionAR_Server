@@ -27,7 +27,7 @@ const createSubjectQualification = async (req: Request, res: Response) => {
 
 const getSubjectQualifications = async (req: Request, res: Response) => {
   try {
-    const { gradeId, subjectId, date } = req.body;
+    const { gradeId, subjectId, date } = req.query;
 
     const { year, month, nextYear, nextMonth } = useDateHelpersByDate(date.toString());
 

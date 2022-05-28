@@ -8,7 +8,7 @@ const { monthlyReport, bimonthlyReport, annuallyReport } = reportController;
 const router = Router();
 
 router.get('/monthly', authenticatedRoutes, monthlyReport);
-router.post('/bimonthly', authenticatedRoutes, bimonthlyReport);
+router.get('/bimonthly', authenticatedRoutes, bimonthlyReport);
 router.get('/annually', authenticatedRoutes, annuallyReport);
 
 export default router;

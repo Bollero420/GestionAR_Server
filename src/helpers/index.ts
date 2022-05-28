@@ -1,3 +1,5 @@
+import { IGrade } from '../types/interfaces/IGrade';
+
 import { availableDays } from '../utils/constants';
 
 export const generateDateHelpers = (month = 0, year = 0, day = 0) => ({
@@ -65,4 +67,13 @@ export const useDateHelpersByDate = (date: string) => {
     nextYear,
     nextDay,
   };
+};
+
+export const sortGrades = (grades: IGrade[]): void => {
+  grades.sort((a, b) => {
+    if (a.level === b.level) {
+      return a.section > b.section ? 1 : -1;
+    }
+    return parseInt(a.level) > parseInt(b.level) ? 1 : -1;
+  });
 };
