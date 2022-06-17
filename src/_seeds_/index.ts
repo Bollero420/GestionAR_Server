@@ -15,18 +15,18 @@ import initialData from './data';
 import { populateActions, populateGroupswithActions } from '../helpers/seed';
 
 const resetDb = async () => {
-  await Action.deleteMany({});
+  // await Action.deleteMany({});
   await Attendance.deleteMany({});
-  await Form.deleteMany({});
-  await Grade.deleteMany({});
-  await Group.deleteMany({});
+  // await Form.deleteMany({});
+  // await Grade.deleteMany({});
+  // await Group.deleteMany({});
   await Observation.deleteMany({});
-  await Student.deleteMany({});
-  await StudentTutor.deleteMany({});
-  await Subject.deleteMany({});
+  // await Student.deleteMany({});
+  // await StudentTutor.deleteMany({});
+  // await Subject.deleteMany({});
   await SubjectQualification.deleteMany({});
-  await Teacher.deleteMany({});
-  await User.deleteMany({});
+  // await Teacher.deleteMany({});
+  // await User.deleteMany({});
 };
 
 const handleSetActions = async (actions: any) => {
@@ -47,25 +47,25 @@ const handleSetGroups = async (groups: any) => {
 
 export const seeder = async () => {
   console.log('seeding');
-  const { forms, actions, groups, grades, subjects } = initialData;
-  // reset Collections
-  await resetDb();
+  // const { forms, actions, groups, grades, subjects } = initialData;
+  // // reset Collections
+  // await resetDb();
 
-  // set Forms Data
-  await Form.insertMany(forms);
-  // set Actions Data
-  await handleSetActions(actions);
-  // set Groups Data
-  await handleSetGroups(groups);
-  // set Grades Data
-  await Grade.insertMany(grades);
+  // // set Forms Data
+  // await Form.insertMany(forms);
+  // // set Actions Data
+  // await handleSetActions(actions);
+  // // set Groups Data
+  // await handleSetGroups(groups);
+  // // set Grades Data
+  // await Grade.insertMany(grades);
 
-  // set Subjects Data
-  await Subject.insertMany(subjects);
+  // // set Subjects Data
+  // await Subject.insertMany(subjects);
 
-  await User.create({
-    username: 'admin',
-    password: 'admin',
-    email_address: 'admin@mail.com',
-  } as any);
+  // await User.create({
+  //   username: 'admin',
+  //   password: 'admin',
+  //   email_address: 'admin@mail.com',
+  // } as any);
 };

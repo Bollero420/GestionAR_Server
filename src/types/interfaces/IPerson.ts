@@ -16,8 +16,8 @@ export interface IPerson extends Document {
 }
 
 export enum GENDER {
-  MASCULINO = 'MASCULINO',
-  FEMENINO = 'FEMENINO',
+  MASCULINO = 'MALE',
+  FEMENINO = 'FEMALE',
 }
 
 export const PersonSchema = {

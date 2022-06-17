@@ -49,3 +49,11 @@ export type MonthlyReport = {
   unAttendancesThisMonth: GenderProcessedData;
   attendancesAverage: GenderProcessedData;
 };
+
+export type AnnuallyReport = {
+  genderByGrades: any;
+  foodServiceByGenders: any;
+  repeatersByGender: any;
+  studentsByAgeAndGender: any;
+  studentsByCountry: any;
+};

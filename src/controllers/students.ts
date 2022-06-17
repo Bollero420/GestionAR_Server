@@ -74,7 +74,7 @@ const createStudent = async (req: Request, res: Response) => {
 
       const dbTutor = new StudentTutor(data);
 
-      const savedTutor = dbTutor.save();
+      const savedTutor = await dbTutor.save();
 
       // store in array saved values for students.
       savedTutors = [...savedTutors, savedTutor];

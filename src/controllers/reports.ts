@@ -15,7 +15,7 @@ import {
 } from '../helpers/reports/data_processors';
 
 import { IStudent } from '../types/interfaces/IStudent';
-import { LevelKeys, StudentsByLevel, MonthlyReport } from '../types/interfaces/IProcessors';
+import { LevelKeys, StudentsByLevel, MonthlyReport, AnnuallyReport } from '../types/interfaces/IProcessors';
 import { generateDateHelpers, groupBy } from '../helpers';
 
 const generateMonthlyReport = async (month: number, year: number, grade_id: string) => {
@@ -121,7 +121,9 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
     total: Math.round(report.attendancesThisMonth.total / daysQtyOfTheMonth),
   };
 
-  return Object.keys(report).map((k: keyof MonthlyReport) => report[k]);
+  const result = Object.keys(report).map((k: keyof MonthlyReport) => report[k]);
+
+  return result;
 };
 
 const generateBiMonthlyReport = async (month: number, year: number, student_id: Types.ObjectId) => {
@@ -145,6 +147,8 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
     if (!isAlreadyRegistered) {
       return [...acc, current];
     }
+
+    return acc;
   }, []);
 
   let student_qualification: any = {
@@ -204,28 +208,36 @@ const generateBiMonthlyReport = async (month: number, year: number, student_id: 
 };
 
 const generateAnnuallyReport = async () => {
-  let report: any = {};
+  let report: AnnuallyReport = {} as AnnuallyReport;
 
-  const grades = await Grade.find({}, { students: 1, level: 1 }).populate('students').lean(true);
-  const gradesLevels = new Set([...grades.map((grade) => grade.level)]);
-
-  const gradesByLevel: StudentsByLevel = groupBy(grades, 'level');
+  const grades = await Grade.find({ section: 'A', shift: 'M' }, { students: 1, level: 1 })
+    .populate('students')
+    .lean(true);
+  const gradesLevels = [...new Set([...grades.map((grade) => grade.level)])];
+  const gradesByLevel: StudentsByLevel = groupBy(grades, 'level', {
+    '1': [],
+    '2': [],
+    '3': [],
+    '4': [],
+    '5': [],
+    '6': [],
+    '7': [],
+  });
 
   const keys = Object.keys(gradesByLevel);
   const studentsByLevel = keys.map((k: LevelKeys) =>
     gradesByLevel[k].reduce(
       (prev, current) => ({
-        students: [...prev.students].concat([...current.students]),
+        [k]: (prev[k] || []).concat([...current.students]),
       }),
       {} as any
     )
   );
 
-  report.genderByGrades = studentsByLevel.map((students: IStudent[]) => processStudentsByGender(students));
+  report.genderByGrades = studentsByLevel.map((students: any, i) => processStudentsByGender(students[i + 1]));
 
   const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
   const processedMilkCup = processStudentsByGender(milk_cup_results);
-
   const school_dining_results = await Student.find({ school_dining: true }).lean(true);
   const processedDining = processStudentsByGender(school_dining_results);
 
@@ -245,6 +257,7 @@ const generateAnnuallyReport = async () => {
     studentsByAgeAndGender
     studentsByCountry
   */
+  return report;
 };
 
 const monthlyReport = async (req: any, res: any) => {
@@ -252,7 +265,8 @@ const monthlyReport = async (req: any, res: any) => {
     const { month, year } = req.query;
     let report: any = [];
 
-    const grades = await Grade.find().lean(true);
+    const grades = await Grade.find({ section: 'A', shift: 'M' }).lean(true);
+
     for (let index = 0; index < grades.length; index++) {
       const grade_id = grades[index]._id;
       const data = generateMonthlyReport(month, year, grade_id);
