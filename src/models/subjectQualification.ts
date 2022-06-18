@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose';
 
-import { QualificationSchema } from '../types/interfaces/IQualification';
-import { ISubjectQualification } from '../types/interfaces/ISubjectQualification';
+import { ISubjectQualification } from '../types/interfaces';
+
+import { QualificationSchema } from './common';
 
 const SubjectQualificationSchema = new Schema(
   {

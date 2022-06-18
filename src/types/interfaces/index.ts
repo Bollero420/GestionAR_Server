@@ -1,0 +1,14 @@
+export { default as IAction } from './IAction';
+export { default as IAttendance } from './IAttendance';
+export { default as IForm } from './IForm';
+export { default as IGrade } from './IGrade';
+export { default as IGroup } from './IGroup';
+export { default as IObservation } from './IObservation';
+export { default as IPerson } from './IPerson';
+export { default as IQualification } from './IQualification';
+export { default as IStudent } from './IStudent';
+export { default as IStudentTutor } from './IStudentTutor';
+export { default as ISubject } from './ISubject';
+export { default as ISubjectQualification } from './ISubjectQualification';
+export { default as ITeacher } from './ITeacher';
+export { default as IUser } from './IUser';

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import Grade from '../models/grade';
-import { IGrade } from '../types/interfaces/IGrade';
+import { IGrade } from '../types/interfaces';
 
 import { sortGrades } from '../helpers';
 

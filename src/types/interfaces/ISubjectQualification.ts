@@ -1,13 +1,9 @@
-import { IQualification } from "./IQualification";
+import { SUBJECT_QUALIFICATION_VALUE } from '../enum';
 
-enum SUBJECT_QUALIFICATION_VALUE {
-  NOT_ENOUGH = 'NOT_ENOUGH',
-  ENOUGH = 'ENOUGH',
-  GOOD = 'GOOD',
-  VERY_GOOD = 'VERY_GOOD',
-  EXCELLENT = 'EXCELLENT'
-}
+import IQualification from './IQualification';
 
-export interface ISubjectQualification extends IQualification {
+interface ISubjectQualification extends IQualification {
   value: SUBJECT_QUALIFICATION_VALUE;
 }
+
+export default ISubjectQualification;

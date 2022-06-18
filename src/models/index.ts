@@ -1,0 +1,12 @@
+export { default as Action } from './action';
+export { default as Attendance } from './attendance';
+export { default as Form } from './form';
+export { default as Grade } from './grade';
+export { default as Group } from './group';
+export { default as Observation } from './observation';
+export { default as Student } from './student';
+export { default as StudentTutor } from './studentTutor';
+export { default as Subject } from './subject';
+export { default as SubjectQualification } from './subjectQualification';
+export { default as Teacher } from './teacher';
+export { default as User } from './user';

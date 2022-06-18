@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IForm } from '../types/interfaces/IForm';
+import { IForm } from '../types/interfaces';
 
 const FormSchema = new Schema(
   {

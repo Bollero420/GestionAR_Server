@@ -1,8 +1,7 @@
-import { RepeatersKey } from '../types/interfaces/IProcessors';
-import { StudentsByAgeKeys } from '../types/interfaces/IProcessors';
-import { IStudent } from '../types/interfaces/IStudent';
+import { StudentsByAgeKeys, RepeatersKey } from '../types';
+import { IStudent } from '../types/interfaces';
 
-const { 
+const {
   JANUAY_HOLIDAYS,
   FEBRUARY_HOILIDAYS,
   MARCH_HOLIDAYS,
@@ -14,8 +13,8 @@ const {
   SEPTEMBER_HOLIDAYS,
   OCTOBER_HOLIDAYS,
   NOVEMBER_HOLIDAYS,
-  DECEMBER_HOLIDAYS
-} = process.env
+  DECEMBER_HOLIDAYS,
+} = process.env;
 
 export const ACCESS_TOKEN_HEADER = 'access-token';
 export const REFRESH_TOKEN_HEADER = 'refresh-token';
@@ -91,5 +90,5 @@ export const availableDays = [
   new Date(currentYear, 9, 0).getDate() - parseInt(SEPTEMBER_HOLIDAYS),
   new Date(currentYear, 10, 0).getDate() - parseInt(OCTOBER_HOLIDAYS),
   new Date(currentYear, 11, 0).getDate() - parseInt(NOVEMBER_HOLIDAYS),
-  new Date(currentYear, 0, 0).getDate() - parseInt(DECEMBER_HOLIDAYS)
+  new Date(currentYear, 0, 0).getDate() - parseInt(DECEMBER_HOLIDAYS),
 ];

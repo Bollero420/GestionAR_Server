@@ -1,20 +1,22 @@
 import { Schema, model } from 'mongoose';
-import { IAction } from '../types/interfaces/IAction';
+import { IAction } from '../types/interfaces';
 
-
-const ActionSchema = new Schema({
-  action_name: {
-    type: String,
-    required: true,
+const ActionSchema = new Schema(
+  {
+    action_name: {
+      type: String,
+      required: true,
+    },
+    form_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Form',
+      required: true,
+    },
   },
-  form_id: {
-    type: Schema.Types.ObjectId,
-    ref: 'Form',
-    required: true,
-  },
-}, {
-  timestamps: true,
-  versionKey: false,
-});
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
 export default model<IAction>('Action', ActionSchema);

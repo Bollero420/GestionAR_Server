@@ -1,4 +1,4 @@
-import { IStudent } from './IStudent';
+import { IStudent } from './interfaces';
 
 export type StudentsByAge = {
   [k in StudentsByAgeKeys]: GenderProcessedData;

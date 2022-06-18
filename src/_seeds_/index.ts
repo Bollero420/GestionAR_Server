@@ -1,18 +1,21 @@
-import Form from '../models/form';
-import Action from '../models/action';
-import Group from '../models/group';
-import Grade from '../models/grade';
-import Subject from '../models/subject';
-import User from '../models/user';
-import Student from '../models/student';
-import SubjectQualification from '../models/subjectQualification';
-import Observation from '../models/observation';
-import StudentTutor from '../models/studentTutor';
-import Attendance from '../models/attendance';
-import Teacher from '../models/teacher';
+import {
+  Form,
+  Action,
+  Group,
+  Grade,
+  Subject,
+  User,
+  Student,
+  SubjectQualification,
+  Observation,
+  StudentTutor,
+  Attendance,
+  Teacher,
+} from '../models';
 
 import initialData from './data';
-import { populateActions, populateGroupswithActions } from '../helpers/seed';
+
+import { populateActions, populateGroupsWithActions } from '../helpers/seed';
 
 const resetDb = async () => {
   // await Action.deleteMany({});
@@ -40,7 +43,7 @@ const handleSetActions = async (actions: any) => {
 const handleSetGroups = async (groups: any) => {
   // get ActionsDocs and populate groups with corresponding Array of '_id'
   const actionsDocs = await Action.find().lean(true);
-  const populatedGroupsWithActions = populateGroupswithActions(actionsDocs, groups);
+  const populatedGroupsWithActions = populateGroupsWithActions(actionsDocs, groups);
   // set Groups Data
   await Group.insertMany(populatedGroupsWithActions);
 };

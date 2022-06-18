@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IGrade } from '../types/interfaces/IGrade';
+import { IGrade } from '../types/interfaces';
 
 const GradeSchema = new Schema(
   {

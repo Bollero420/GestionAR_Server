@@ -1,5 +1,6 @@
-import Observation from '../models/observation';
 import { Request, Response } from 'express';
+
+import Observation from '../models/observation';
 
 const createObservation = async (req: Request, res: Response) => {
   const {

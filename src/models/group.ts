@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IGroup } from '../types/interfaces/IGroup';
+import { IGroup } from '../types/interfaces';
 
 const GroupSchema = new Schema(
   {

@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose';
-import { PersonSchema } from '../types/interfaces/IPerson';
-import { IStudentTutor } from '../types/interfaces/IStudentTutor';
+
+import { IStudentTutor } from '../types/interfaces';
+
+import { PersonSchema } from './common';
 
 const StudentTutorSchema = new Schema(
   {

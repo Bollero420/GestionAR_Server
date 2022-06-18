@@ -1,7 +1,8 @@
 import { Types } from 'mongoose';
-import { IPerson } from './IPerson';
 
-export interface IStudent extends IPerson {
+import IPerson from './IPerson';
+
+interface IStudent extends IPerson {
   grade_id: Types.ObjectId;
   integrated: boolean;
   entry_date: Date;
@@ -18,3 +19,5 @@ export interface IStudent extends IPerson {
   repeating_quantity: number;
   student_tutors: Types.ObjectId[];
 }
+
+export default IStudent;

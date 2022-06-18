@@ -1,7 +1,9 @@
-import User from '../models/user';
 import { Request, Response } from 'express';
 import jwt, { VerifyErrors } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+
+import { User } from '../models';
+
 import {
   ACCESS_TOKEN_HEADER,
   ACCESS_MAX_AGE_SECONDS,
@@ -52,7 +54,7 @@ const signIn = async (req: Request, res: Response) => {
       res.status(404).send('User not found');
     }
   } catch (error) {
-    res.status(500).json({errorMessage: error.message});
+    res.status(500).json({ errorMessage: error.message });
   }
 };
 

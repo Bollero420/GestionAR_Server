@@ -4,7 +4,7 @@ dotenv.config();
 
 import mongoose from 'mongoose';
 import cors from 'cors';
-import router from '../src/routes';
+import router from './routes';
 import cookieParser from 'cookie-parser';
 import { seeder } from './_seeds_';
 

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
-import SubjectQualification from '../models/subjectQualification';
-import Grade from '../models/grade';
+import { SubjectQualification, Grade } from '../models';
 
 import { useDateHelpersByDate } from '../helpers';
 

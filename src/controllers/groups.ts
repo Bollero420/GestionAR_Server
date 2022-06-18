@@ -1,5 +1,6 @@
-import Group from '../models/group';
 import { Request, Response } from 'express';
+
+import Group from '../models/group';
 
 const createGroup = async (req: Request, res: Response) => {
   const { group_name, users, actions } = req.body;

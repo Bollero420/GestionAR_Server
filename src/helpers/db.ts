@@ -1,8 +1,4 @@
-import Observation from '../models/observation';
-import SubjectQualification from '../models/subjectQualification';
-import Subject from '../models/subject';
-import User from '../models/user';
-import Group from '../models/group';
+import { Observation, SubjectQualification, Subject, User, Group } from '../models';
 
 import { isQualificationCompleted, useDateHelpersByDate } from '../helpers';
 

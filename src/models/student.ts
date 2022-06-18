@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose';
 
-import { PersonSchema } from '../types/interfaces/IPerson';
-import { IStudent } from '../types/interfaces/IStudent';
+import { IStudent } from '../types/interfaces';
+
+import { PersonSchema } from './common';
 
 const StudentSchema = new Schema(
   {

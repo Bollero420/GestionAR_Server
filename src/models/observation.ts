@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose';
 
-import { QualificationSchema } from '../types/interfaces/IQualification';
-import { IObservation } from '../types/interfaces/IObservation';
+import { IObservation } from '../types/interfaces';
+
+import { QualificationSchema } from './common';
 
 const ObservationSchema = new Schema(
   {

@@ -1,4 +1,4 @@
-import { IGrade } from '../types/interfaces/IGrade';
+import { IGrade } from '../types/interfaces';
 
 import { availableDays } from '../utils/constants';
 
