@@ -6,11 +6,11 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import router from './routes';
 import cookieParser from 'cookie-parser';
-import { seeder } from './_seeds_';
+
+import { postDbConnection } from './helpers/db';
 
 const app = express();
 const port = process.env.PORT || 4000;
-const runSeeder = process.env.RUN_SEEDER;
 
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(cookieParser());
@@ -24,17 +24,11 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('DB connected'))
+  .then(postDbConnection)
   .catch((err) => console.log('error', err));
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
-
-if (runSeeder === 'true') {
-  seeder()
-    .then(() => console.log('finish seeder'))
-    .catch((err) => console.log('error ->', err));
-}
 
 export default app;

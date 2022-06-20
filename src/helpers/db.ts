@@ -2,6 +2,10 @@ import { Observation, SubjectQualification, Subject, User, Group } from '../mode
 
 import { isQualificationCompleted, useDateHelpersByDate } from '../helpers';
 
+import { seeder } from '../_seeds_';
+
+const runSeeder = process.env.RUN_SEEDER;
+
 export const getStudentQualificationAndObservations = async (date: string, student_id: string) => {
   const { year, month, day, nextYear, nextMonth, nextDay } = useDateHelpersByDate(date);
 
@@ -109,4 +113,15 @@ export const userFactory = async (type: string, model: any) => {
   });
 
   await newUser.save();
+};
+
+export const postDbConnection = async () => {
+  console.log('DB connected');
+  await handleSeed();
+};
+
+export const handleSeed = async () => {
+  if (!runSeeder) return;
+  await seeder();
+  console.log('Seeder Finished');
 };

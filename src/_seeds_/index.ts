@@ -13,23 +13,37 @@ import {
   Teacher,
 } from '../models';
 
-import initialData from './data';
+import initialData from './initialData';
+import seedData from './seedData';
 
 import { populateActions, populateGroupsWithActions } from '../helpers/seed';
 
-const resetDb = async () => {
-  // await Action.deleteMany({});
-  await Attendance.deleteMany({});
-  // await Form.deleteMany({});
-  // await Grade.deleteMany({});
-  // await Group.deleteMany({});
-  await Observation.deleteMany({});
-  // await Student.deleteMany({});
-  // await StudentTutor.deleteMany({});
-  // await Subject.deleteMany({});
-  await SubjectQualification.deleteMany({});
-  // await Teacher.deleteMany({});
-  // await User.deleteMany({});
+const models = {
+  Form,
+  Action,
+  Group,
+  Grade,
+  Subject,
+  User,
+  Student,
+  SubjectQualification,
+  Observation,
+  StudentTutor,
+  Attendance,
+  Teacher,
+};
+
+const resetDb = async (modelsNames?: string[]) => {
+  if (!modelsNames) {
+    console.log('Skipping resetDb');
+    return;
+  }
+  console.log('Restarting Db values for: ', modelsNames);
+  for (let index = 0; index < modelsNames.length; index++) {
+    const modelName = modelsNames[index];
+    await models[modelName].deleteMany({});
+    console.log('Finished with ' + modelName + ' collection');
+  }
 };
 
 const handleSetActions = async (actions: any) => {
@@ -48,27 +62,71 @@ const handleSetGroups = async (groups: any) => {
   await Group.insertMany(populatedGroupsWithActions);
 };
 
+const setInitialData = async () => {
+  const { forms, actions, groups, grades, subjects } = initialData;
+
+  // set Forms Data
+  await Form.insertMany(forms);
+
+  // set Actions Data
+  await handleSetActions(actions);
+
+  // set Groups Data
+  await handleSetGroups(groups);
+
+  // set Grades Data
+  await Grade.insertMany(grades);
+
+  // set Subjects Data
+  await Subject.insertMany(subjects);
+
+  await User.create({
+    username: 'admin',
+    password: 'admin',
+    email_address: 'admin@mail.com',
+  } as any);
+};
+
+const setSeedData = async () => {
+  const { attendances, observations, subjectQualifications } = seedData;
+
+  await DataCreator(attendances, 'Attendance', ['createdAt', 'updatedAt']);
+
+  await DataCreator(observations, 'Observation', ['createdAt', 'updatedAt']);
+
+  await DataCreator(subjectQualifications, 'SubjectQualification', ['bimonthly_date', 'createdAt', 'updatedAt']);
+};
+
+const parseDate = (dateString: string) => {
+  const [day, month, year] = dateString.split('/').map((v) => parseInt(v));
+  return new Date(year, month - 1, day);
+};
+
+const DataCreator = async (dataArray: any[], modelName: string, dateFields: string[]) => {
+  console.log('Seeding ' + modelName);
+  for (let index = 0; index < dataArray.length; index++) {
+    let element = dataArray[index];
+
+    dateFields.forEach((field) => {
+      if (element[field]) {
+        element[field] = parseDate(element[field]);
+      }
+    });
+
+    await models[modelName].create(element as any);
+  }
+  console.log('Finished seeding ' + dataArray.length + ' ' + modelName + ' documents.');
+};
+
 export const seeder = async () => {
-  console.log('seeding');
-  // const { forms, actions, groups, grades, subjects } = initialData;
-  // // reset Collections
-  // await resetDb();
+  console.log('Starting seeder');
 
-  // // set Forms Data
-  // await Form.insertMany(forms);
-  // // set Actions Data
-  // await handleSetActions(actions);
-  // // set Groups Data
-  // await handleSetGroups(groups);
-  // // set Grades Data
-  // await Grade.insertMany(grades);
+  // reset Collections
+  // await resetDb(['Attendance', 'Observation', 'SubjectQualification']);
 
-  // // set Subjects Data
-  // await Subject.insertMany(subjects);
+  // Set Initial Data
+  // await setInitialData();
 
-  // await User.create({
-  //   username: 'admin',
-  //   password: 'admin',
-  //   email_address: 'admin@mail.com',
-  // } as any);
+  // Set Seed Data
+  // await setSeedData();
 };
