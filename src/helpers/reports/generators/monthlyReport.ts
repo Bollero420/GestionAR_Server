@@ -109,9 +109,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
     total: Math.round(report.attendancesThisMonth.total / daysQtyOfTheMonth),
   };
 
-  const result = Object.keys(report).map((k: keyof MonthlyReport) => report[k]);
-
-  return result;
+  return report;
 };
 
 export default generateMonthlyReport;

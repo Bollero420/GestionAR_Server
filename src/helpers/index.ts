@@ -77,3 +77,32 @@ export const sortGrades = (grades: IGrade[]): void => {
     return parseInt(a.level) > parseInt(b.level) ? 1 : -1;
   });
 };
+
+export const parseGradeName = (grade: IGrade): string => {
+  let name = '';
+  switch (grade.level) {
+    case '1':
+      name = '1ero';
+      break;
+    case '2':
+      name = '2ndo';
+      break;
+    case '3':
+      name = '3ero';
+      break;
+    case '4':
+      name = '4to';
+      break;
+    case '5':
+      name = '5to';
+      break;
+    case '6':
+      name = '6to';
+      break;
+    case '7':
+      name = '7to';
+      break;
+  }
+  const result = `${name} "${grade.section}"`;
+  return result;
+};

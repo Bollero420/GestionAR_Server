@@ -1,26 +1,50 @@
 import { Grade } from '../models';
 
+import { MonthlyReport } from '../types';
+import { IGrade, IStudent } from '../types/interfaces';
+
 import {
   generateBiMonthlyReport,
   generateInitialAnnuallyReport,
   generateMonthlyReport,
   generateFinalAnnuallyReport,
 } from '../helpers/reports/generators';
+import { parseGradeName } from '../helpers';
 
 const monthlyReport = async (req: any, res: any) => {
   try {
     const { month, year } = req.query;
-    let report: any = [];
 
-    const grades = await Grade.find({ section: 'A', shift: 'M' }).lean(true);
+    let results: {
+      grade_id: string;
+      data: MonthlyReport;
+    }[] = [];
+
+    const grades = await Grade.find({ section: 'A', shift: 'M' }, {}, { sort: { level: 1 } }).lean(true);
 
     for (let index = 0; index < grades.length; index++) {
       const grade_id = grades[index]._id;
-      const data = generateMonthlyReport(month, year, grade_id);
-      report = [...report, { grade_id, data }];
+      const data = await generateMonthlyReport(month, year, grade_id);
+      results = [...results, { grade_id, data }];
     }
+
+    const reports = results.reduce((acc, current) => {
+      const reportData = current.data;
+      const gradeData: IGrade = grades.find((g) => g._id === current.grade_id) as IGrade;
+
+      return [
+        ...acc,
+        {
+          ...reportData,
+          gradeAndSection: parseGradeName(gradeData),
+          shift: gradeData.shift,
+        },
+      ];
+    }, [] as any);
+
     res.status(200).json({
-      data: report,
+      data: reports,
+      grades: results.map((r) => r.grade_id),
       month,
       year,
     });
@@ -34,13 +58,13 @@ const bimonthlyReport = async (req: any, res: any) => {
     const { month, year, grade_id } = req.query;
     let report: any = [];
 
-    const gradeDoc = await Grade.findById(grade_id);
+    const gradeDoc = await Grade.findById(grade_id).populate('students').lean(true);
 
     for (let index = 0; index < gradeDoc.students.length; index++) {
-      const studentId = gradeDoc.students[index];
+      const student = gradeDoc.students[index] as unknown as IStudent;
 
-      const data = generateBiMonthlyReport(month, year, studentId);
-      report = [...report, { studentId, data }];
+      const data = await generateBiMonthlyReport(month, year, student);
+      report = [...report, data];
     }
 
     res.status(200).json({

@@ -28,7 +28,7 @@ const createGrade = async (req: Request, res: Response) => {
 
 const getGrades = async (req: Request, res: Response) => {
   try {
-    const grades = await Grade.find().lean(true);
+    const grades = await Grade.find({ section: 'A', shift: 'M' }, {}, { sort: { level: 1 } }).lean(true);
 
     if (grades.length > 1) {
       sortGrades(grades as IGrade[]);
