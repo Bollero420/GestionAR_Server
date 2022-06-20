@@ -19,8 +19,8 @@ const generateBiMonthlyReport = async (month: number, year: number, student: ISt
   });
 
   const unAttendancesFromStudent = studentUnAttendancesDocsQty.reduce((acc: any[], current: any) => {
-    const docDay = new Date(current.created_at).getDate();
-    const isAlreadyRegistered = acc.some((attendance: any) => new Date(attendance.created_at).getDate() === docDay);
+    const docDay = new Date(current.createdAt).getDate();
+    const isAlreadyRegistered = acc.some((attendance: any) => new Date(attendance.createdAt).getDate() === docDay);
     if (!isAlreadyRegistered) {
       return [...acc, current];
     }

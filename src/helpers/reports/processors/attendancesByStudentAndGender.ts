@@ -5,19 +5,22 @@ import { genderProcessedDataInitialValue } from '../../../utils/constants';
 export const processAttendancesByStudentAndGender = (populatedAttendancesArray: any[]) => {
   const attendancesByStudent = populatedAttendancesArray.reduce((acc: any, current: any) => {
     const student_id = current.student_id._id as string;
-    const docDay = new Date(current.created_at).getDate();
+    const docDay = new Date(current.createdAt).getDate();
+
     const isAlreadyRegistered =
-      acc[student_id] &&
-      acc[student_id].some((attendance: any) => new Date(attendance.created_at).getDate() === docDay);
+      acc[student_id] && acc[student_id].some((attendance: any) => new Date(attendance.createdAt).getDate() === docDay);
 
     if (!isAlreadyRegistered) {
       return {
         ...acc,
-        [student_id]: [...(acc[student_id] as any), current],
+        [student_id]: [current],
       };
     }
 
-    return { ...acc };
+    return {
+      ...acc,
+      [student_id]: [...acc[student_id], current],
+    };
   }, {});
 
   const attendancesByStudentGenderTotals = Object.keys(attendancesByStudent).reduce((acc: any, sdt_id: any) => {
