@@ -6,6 +6,8 @@ import { seeder } from '../_seeds_';
 
 const runSeeder = process.env.RUN_SEEDER;
 
+const isBooleanCheck = runSeeder === 'true' || runSeeder === 'false';
+
 export const getStudentQualificationAndObservations = async (date: string, student_id: string) => {
   const { year, month, day, nextYear, nextMonth, nextDay } = useDateHelpersByDate(date);
 
@@ -121,7 +123,7 @@ export const postDbConnection = async () => {
 };
 
 export const handleSeed = async () => {
-  if (!runSeeder) return;
+  if (!isBooleanCheck || (isBooleanCheck && runSeeder === 'false')) return;
   await seeder();
   console.log('Seeder Finished');
 };

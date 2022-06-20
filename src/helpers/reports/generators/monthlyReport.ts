@@ -112,7 +112,7 @@ const generateMonthlyReport = async (month: number, year: number, grade_id: stri
 
     return report;
   } catch (error) {
-    console.log('generateMonthlyReport ->', error);
+    console.log('Error - generateMonthlyReport ->', error);
   }
 };
 

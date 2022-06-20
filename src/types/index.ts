@@ -56,4 +56,5 @@ export type AnnuallyReport = {
   repeatersByGender: any;
   studentsByAgeAndGender: any;
   studentsByCountry: any;
+  studentsByCountryAndGender: any;
 };
