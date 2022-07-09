@@ -12,3 +12,4 @@ export { default as ISubject } from './ISubject';
 export { default as ISubjectQualification } from './ISubjectQualification';
 export { default as ITeacher } from './ITeacher';
 export { default as IUser } from './IUser';
+export { default as ILogger } from './ILogger';

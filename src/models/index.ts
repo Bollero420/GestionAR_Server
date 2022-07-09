@@ -10,3 +10,4 @@ export { default as Subject } from './subject';
 export { default as SubjectQualification } from './subjectQualification';
 export { default as Teacher } from './teacher';
 export { default as User } from './user';
+export { default as Logger } from './logger';

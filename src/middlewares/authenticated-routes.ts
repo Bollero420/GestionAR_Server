@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { VerifyErrors } from 'jsonwebtoken';
 
 import { ACCESS_TOKEN_HEADER } from '../utils/constants';
-import User from '../models/user';
+import { User, Logger } from '../models';
 
 const { JWT_ACCESS_KEY } = process.env;
 
@@ -13,15 +13,16 @@ export const authenticatedRoutes = (req: any, res: Response, next: NextFunction)
     if (token) {
       jwt.verify(token, JWT_ACCESS_KEY, async (err: VerifyErrors, decoded: any) => {
         if (err) {
-          return res.status(404).json({ message: 'Invalid Token' });
+          return res.status(401).json({ message: 'Invalid Token' });
         } else {
-          const user = await User.findById(decoded.ussssssssssssssssssrId);
+          const user = await User.findById(decoded.userId);
           req.currentUser = user;
+          // add logger for url and request information. Display username.
           next();
         }
       });
     } else {
-      res.status(404).send({
+      res.status(401).send({
         message: 'Token not found',
       });
     }

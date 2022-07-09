@@ -387,7 +387,7 @@ const subjects: any[] = [
   { subject_name: 'Tecnologia'.toLowerCase(), teachers: [] },
   { subject_name: 'Formacion_Etica_y_Ciudadana'.toLowerCase(), teachers: [] },
   { subject_name: 'Educacion_Fisica'.toLowerCase(), teachers: [] },
-  { subject_name: 'Plasitca'.toLowerCase(), teachers: [] },
+  { subject_name: 'Plastica'.toLowerCase(), teachers: [] },
   { subject_name: 'Musica'.toLowerCase(), teachers: [] },
   { subject_name: 'Observaciones'.toLowerCase(), teachers: [] },
 ];

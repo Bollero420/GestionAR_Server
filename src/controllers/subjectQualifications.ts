@@ -5,19 +5,21 @@ import { SubjectQualification, Grade } from '../models';
 import { useDateHelpersByDate } from '../helpers';
 
 const createSubjectQualification = async (req: Request, res: Response) => {
-  const { student_id, subject_id, bimonthly_date, value } = req.body;
-
-  const newSubjectQualification = new SubjectQualification({
-    student_id,
-    subject_id,
-    bimonthly_date,
-    value,
-  });
-
   try {
-    const savedSubjectQualification = await newSubjectQualification.save();
-    if (savedSubjectQualification) {
-      res.status(200).json('SubjectQualification added!');
+    const { qualifications } = req.body;
+
+    for (let index = 0; index < qualifications.length; index++) {
+      const { student_id, subject_id, bimonthly_date, value } = qualifications[index];
+
+      const newSubjectQualification = new SubjectQualification({
+        student_id,
+        subject_id,
+        bimonthly_date,
+        value,
+      });
+
+      await newSubjectQualification.save();
+      res.status(201).json('Calificaciones Cargadas');
     }
   } catch (error) {
     res.status(400).json('Error: ' + error);
