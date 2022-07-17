@@ -42,8 +42,8 @@ const processRepeatersByGender = (gradesLevels: string[], studentsByLevel: any[]
         repeaters_by_gender[index] = {
           ...repeaters_by_gender[index],
           [`_${level}_female`]: totalByGender.female,
-          [`_${level}male`]: totalByGender.male,
-          [`_${level}total`]: totalByGender.total,
+          [`_${level}_male`]: totalByGender.male,
+          [`_${level}_total`]: totalByGender.total,
         };
       } else {
         const repeaterKey: RepeatersKey = repeatersArray[index];
@@ -51,8 +51,8 @@ const processRepeatersByGender = (gradesLevels: string[], studentsByLevel: any[]
           repeaters_by_gender[index] = {
             ...repeaters_by_gender[index],
             [`_${level}_female`]: processedStudents[repeaterKey].female,
-            [`_${level}male`]: processedStudents[repeaterKey].male,
-            [`_${level}total`]: processedStudents[repeaterKey].total,
+            [`_${level}_male`]: processedStudents[repeaterKey].male,
+            [`_${level}_total`]: processedStudents[repeaterKey].total,
           };
         }
       }

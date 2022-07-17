@@ -81,7 +81,7 @@ const bimonthlyReport = async (req: any, res: any) => {
 
 const initialAnnuallyReport = async (req: any, res: any) => {
   try {
-    const report = generateInitialAnnuallyReport();
+    const report = await generateInitialAnnuallyReport();
     res.status(200).json({
       data: report,
     });
@@ -92,7 +92,7 @@ const initialAnnuallyReport = async (req: any, res: any) => {
 
 const finalAnnuallyReport = async (req: any, res: any) => {
   try {
-    const report = generateFinalAnnuallyReport();
+    const report = await generateFinalAnnuallyReport();
     res.status(200).json({
       data: report,
     });

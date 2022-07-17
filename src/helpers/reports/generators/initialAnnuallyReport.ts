@@ -39,20 +39,31 @@ const generateInitialAnnuallyReport = async () => {
       )
     );
 
-    report.genderByGrades = studentsByLevel.map((students: any, i) => processStudentsByGender(students[i + 1]));
+    // report.genderByGrades = studentsByLevel.map((students: any, i) => processStudentsByGender(students[i + 1]));
 
-    const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
-    const processedMilkCup = processStudentsByGender(milk_cup_results);
-    const school_dining_results = await Student.find({ school_dining: true }).lean(true);
-    const processedDining = processStudentsByGender(school_dining_results);
+    // console.log('genderByGrades ->', report.genderByGrades);
 
-    report.foodServiceByGenders = [{ ...processedMilkCup }, { ...processedDining }];
+    // const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
+    // const processedMilkCup = processStudentsByGender(milk_cup_results);
+    // const school_dining_results = await Student.find({ school_dining: true }).lean(true);
+    // const processedDining = processStudentsByGender(school_dining_results);
 
-    report.repeatersByGender = processRepeatersByGender(gradesLevels, studentsByLevel);
+    // console.log('processedMilkCup ->', processedMilkCup);
+    // console.log('processedDining ->', processedDining);
 
-    report.studentsByAgeAndGender = processStudentsByAgeAndGender(gradesLevels, studentsByLevel);
+    // report.foodServiceByGenders = [{ ...processedMilkCup }, { ...processedDining }];
 
-    report.studentsByCountryAndGender = await processStudentsByCountryAndGender(gradesLevels, studentsByLevel);
+    // console.log('foodServiceByGenders ->', report.foodServiceByGenders);
+
+    // report.repeatersByGender = processRepeatersByGender(gradesLevels, studentsByLevel);
+
+    // console.log('repeatersByGender ->', report.repeatersByGender);
+
+    // report.studentsByAgeAndGender = processStudentsByAgeAndGender(gradesLevels, studentsByLevel);
+
+    // console.log('studentsByAgeAndGender ->', report.studentsByAgeAndGender);
+
+    // report.studentsByCountryAndGender = await processStudentsByCountryAndGender(gradesLevels, studentsByLevel);
 
     return report;
   } catch (error) {

@@ -2,7 +2,7 @@ import processAttendancesByDateAndGender from './attendancesByDateAndGender';
 
 import { genderProcessedDataInitialValue } from '../../../utils/constants';
 
-export const processAttendancesByStudentAndGender = (populatedAttendancesArray: any[]) => {
+const processAttendancesByStudentAndGender = (populatedAttendancesArray: any[]) => {
   const attendancesByStudent = populatedAttendancesArray.reduce((acc: any, current: any) => {
     const student_id = current.student_id._id as string;
     const docDay = new Date(current.createdAt).getDate();

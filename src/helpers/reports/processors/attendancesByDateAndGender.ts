@@ -6,7 +6,7 @@ import { GENDER } from '../../../types/enum';
 
 import { genderProcessedDataInitialValue } from '../../../utils/constants';
 
-export const processAttendancesByDateAndGender = (data: DocumentDefinition<IAttendance>[]): GenderProcessedData => {
+const processAttendancesByDateAndGender = (data: DocumentDefinition<IAttendance>[]): GenderProcessedData => {
   if (!data) return genderProcessedDataInitialValue;
   const reducedData = data.reduce((prev, current: any) => {
     switch (current.student_id.gender) {

@@ -6,7 +6,7 @@ import { ageArray, genderProcessedDataInitialValue, studentsByAge } from '../../
 import { getAge, getAgeKey } from '../../parsers';
 import processStudentsByGender from './studentsByGender';
 
-export const processStudentsByAgeAndGender = (gradesLevels: string[], studentsByLevel: any[]) => {
+const processStudentsByAgeAndGender = (gradesLevels: string[], studentsByLevel: any[]) => {
   let students_by_age = Array(14).fill({});
 
   for (let level of gradesLevels) {
@@ -55,7 +55,7 @@ export const processStudentsByAgeAndGender = (gradesLevels: string[], studentsBy
           [`_${level}total`]: totalByGender.total,
         };
       } else {
-        const ageKey: StudentsByAgeKeys = ageArray[index];
+        const ageKey: StudentsByAgeKeys = ageArray[index - 1];
         if (ageKey) {
           students_by_age[index] = {
             ...students_by_age[index],
