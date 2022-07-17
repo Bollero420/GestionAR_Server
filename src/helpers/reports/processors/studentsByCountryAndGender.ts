@@ -7,7 +7,7 @@ const processStudentsByCountryAndGender = async (gradesLevels: string[], student
   try {
     let students_by_country = await Student.find({}).distinct('country');
 
-    students_by_country = students_by_country.map((v) => ({ country: v.toLowerCase() }));
+    students_by_country = students_by_country.map((v) => ({ row: v.toLowerCase() }));
 
     for (let level of gradesLevels) {
       const students: IStudent[] = studentsByLevel[parseInt(level) - 1][level];
@@ -32,7 +32,7 @@ const processStudentsByCountryAndGender = async (gradesLevels: string[], student
 
       countriesOnLevel.forEach((country) => {
         // get country index (row) from acc
-        const countryIdx = students_by_country.findIndex((s_b_c: any) => s_b_c.country === country);
+        const countryIdx = students_by_country.findIndex((s_b_c: any) => s_b_c.row === country);
         // get processedData for country for level
         const value = processedStudents[country];
 

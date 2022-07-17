@@ -41,6 +41,8 @@ export const getRepeatingQuantityKey = (repeating_quantity: number) => {
       return 'third';
     case 4:
       return 'forth';
+    default:
+      return 'none';
   }
 };
 

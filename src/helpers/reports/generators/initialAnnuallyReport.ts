@@ -71,9 +71,7 @@ const generateInitialAnnuallyReport = async () => {
       { ...processedDining, row: 'almuerzo' },
     ];
 
-    // report.repeatersByGender = processRepeatersByGender(gradesLevels, studentsByLevel);
-
-    // console.log('repeatersByGender ->', report.repeatersByGender);
+    report.repeatersByGender = processRepeatersByGender(gradesLevels, studentsByLevel);
 
     // report.studentsByAgeAndGender = processStudentsByAgeAndGender(gradesLevels, studentsByLevel);
 
