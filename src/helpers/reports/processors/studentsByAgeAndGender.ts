@@ -1,16 +1,31 @@
 import { IStudent } from '../../../types/interfaces';
-import { StudentsByAge, StudentsByAgeKeys } from '../../../types';
 
-import { ageArray, genderProcessedDataInitialValue, studentsByAge } from '../../../utils/constants';
+import { studentsByAge } from '../../../utils/constants';
 
 import { getAge, getAgeKey } from '../../parsers';
 import processStudentsByGender from './studentsByGender';
 
 const processStudentsByAgeAndGender = (gradesLevels: string[], studentsByLevel: any[]) => {
-  let students_by_age = Array(14).fill({});
+  let students_by_age: any[] = [
+    { row: 'five' },
+    { row: 'six' },
+    { row: 'seven' },
+    { row: 'eight' },
+    { row: 'nine' },
+    { row: 'ten' },
+    { row: 'eleven' },
+    { row: 'twelve' },
+    { row: 'thirteen' },
+    { row: 'fourteen' },
+    { row: 'fifteen' },
+    { row: 'sixteen' },
+    { row: 'seventeen' },
+    { row: 'eighteen' },
+  ];
 
   for (let level of gradesLevels) {
     const students: IStudent[] = studentsByLevel[parseInt(level) - 1][level];
+
     const filteredStudents = students.reduce((acc, current) => {
       const key = getAgeKey(getAge(current.birth_date.toDateString()));
       return {
@@ -19,53 +34,34 @@ const processStudentsByAgeAndGender = (gradesLevels: string[], studentsByLevel: 
       };
     }, studentsByAge);
 
-    const processedStudents: StudentsByAge = {
-      five: processStudentsByGender(filteredStudents.five),
-      six: processStudentsByGender(filteredStudents.six),
-      seven: processStudentsByGender(filteredStudents.seven),
-      eight: processStudentsByGender(filteredStudents.eight),
-      nine: processStudentsByGender(filteredStudents.nine),
-      ten: processStudentsByGender(filteredStudents.ten),
-      eleven: processStudentsByGender(filteredStudents.eleven),
-      twelve: processStudentsByGender(filteredStudents.twelve),
-      thirteen: processStudentsByGender(filteredStudents.thirteen),
-      fourteen: processStudentsByGender(filteredStudents.fourteen),
-      fifteen: processStudentsByGender(filteredStudents.fifteen),
-      sixteen: processStudentsByGender(filteredStudents.sixteen),
-      seventeen: processStudentsByGender(filteredStudents.seventeen),
-      eighteen: processStudentsByGender(filteredStudents.eighteen),
-    };
+    const agesOnLevel: string[] = Object.keys(filteredStudents);
 
-    const totalByGender = Object.keys(processedStudents).reduce((acc, ages: StudentsByAgeKeys) => {
-      const value = processedStudents[ages];
-
+    const processedStudents = agesOnLevel.reduce((acc, age) => {
+      const studentsFromAge = filteredStudents[age];
       return {
-        female: acc.female + value.female,
-        male: acc.male + value.male,
-        total: acc.total + value.total,
+        ...acc,
+        [age]: processStudentsByGender(studentsFromAge),
       };
-    }, genderProcessedDataInitialValue);
+    }, {});
 
-    for (let index = 0; index < students_by_age.length; index++) {
-      if (index === 0) {
-        students_by_age[index] = {
-          ...students_by_age[index],
-          [`_${level}_female`]: totalByGender.female,
-          [`_${level}male`]: totalByGender.male,
-          [`_${level}total`]: totalByGender.total,
-        };
-      } else {
-        const ageKey: StudentsByAgeKeys = ageArray[index - 1];
-        if (ageKey) {
-          students_by_age[index] = {
-            ...students_by_age[index],
-            [`_${level}_female`]: processedStudents[ageKey].female,
-            [`_${level}male`]: processedStudents[ageKey].male,
-            [`_${level}total`]: processedStudents[ageKey].total,
-          };
-        }
-      }
-    }
+    agesOnLevel.forEach((age) => {
+      // get age index (row) from acc
+      const ageIdx = students_by_age.findIndex((s_b_a: any) => s_b_a.row === age);
+      // get processedData for age for level
+      const value = processedStudents[age];
+
+      students_by_age[ageIdx] = {
+        ...students_by_age[ageIdx],
+        // increment total value on country row.
+        ['_total_female']: (students_by_age[ageIdx]['_total_female'] ?? 0) + value.female,
+        ['_total_male']: (students_by_age[ageIdx]['_total_male'] ?? 0) + value.male,
+        ['_total_total']: (students_by_age[ageIdx]['_total_total'] ?? 0) + value.total,
+        // set values from level on country row.
+        [`_${level}_female`]: value.female,
+        [`_${level}_male`]: value.male,
+        [`_${level}_total`]: value.total,
+      };
+    });
   }
   return students_by_age;
 };
