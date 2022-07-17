@@ -39,8 +39,6 @@ const generateInitialAnnuallyReport = async () => {
       )
     );
 
-    console.log('studentsByLevel ->', studentsByLevel);
-
     const genderByGradesReport = [{ row: 'female' }, { row: 'male' }, { row: 'total' }];
 
     studentsByLevel.forEach((students: any, i) => {
@@ -63,17 +61,15 @@ const generateInitialAnnuallyReport = async () => {
 
     report.genderByGrades = genderByGradesReport;
 
-    // const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
-    // const processedMilkCup = processStudentsByGender(milk_cup_results);
-    // const school_dining_results = await Student.find({ school_dining: true }).lean(true);
-    // const processedDining = processStudentsByGender(school_dining_results);
+    const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
+    const processedMilkCup = processStudentsByGender(milk_cup_results);
+    const school_dining_results = await Student.find({ school_dining: true }).lean(true);
+    const processedDining = processStudentsByGender(school_dining_results);
 
-    // console.log('processedMilkCup ->', processedMilkCup);
-    // console.log('processedDining ->', processedDining);
-
-    // report.foodServiceByGenders = [{ ...processedMilkCup }, { ...processedDining }];
-
-    // console.log('foodServiceByGenders ->', report.foodServiceByGenders);
+    report.foodServiceByGenders = [
+      { ...processedMilkCup, row: 'copa_de_leche' },
+      { ...processedDining, row: 'almuerzo' },
+    ];
 
     // report.repeatersByGender = processRepeatersByGender(gradesLevels, studentsByLevel);
 
