@@ -39,9 +39,29 @@ const generateInitialAnnuallyReport = async () => {
       )
     );
 
-    // report.genderByGrades = studentsByLevel.map((students: any, i) => processStudentsByGender(students[i + 1]));
+    console.log('studentsByLevel ->', studentsByLevel);
 
-    // console.log('genderByGrades ->', report.genderByGrades);
+    const genderByGradesReport = [{ row: 'female' }, { row: 'male' }, { row: 'total' }];
+
+    studentsByLevel.forEach((students: any, i) => {
+      const level = i + 1;
+
+      const processedData = processStudentsByGender(students[level]);
+
+      Object.keys(processedData).forEach((key) => {
+        const idx = genderByGradesReport.findIndex((report) => report.row === key);
+
+        const value = processedData[key];
+
+        genderByGradesReport[idx] = {
+          ...genderByGradesReport[idx],
+          [`_total_${key}`]: (genderByGradesReport[idx][`_total_${key}`] ?? 0) + value,
+          [`_${level}_${key}`]: value,
+        };
+      });
+    });
+
+    report.genderByGrades = genderByGradesReport;
 
     // const milk_cup_results = await Student.find({ milk_cup: true }).lean(true);
     // const processedMilkCup = processStudentsByGender(milk_cup_results);
